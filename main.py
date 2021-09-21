@@ -14,3 +14,4 @@ def main(args):
     
     # get player skin
     player = pygame.image.load("./sprites/pg.png")
+    print("ciao")
