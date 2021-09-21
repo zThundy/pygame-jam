@@ -16,7 +16,7 @@ def showSplashScreen():
 
     # 4 secondi di attesa
     while display_splash_screen <= 5000:
-        SCREEN.fill((0,0,0))
+        SCREEN.fill((0, 0, 0))
         display_splash_screen += 1
 
         for event in pygame.event.get():
