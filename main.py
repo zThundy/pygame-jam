@@ -18,7 +18,6 @@ def showSplashScreen():
     while display_splash_screen <= 5000:
         SCREEN.fill((0,0,0))
         display_splash_screen += 1
-        audio_keyboard = None
 
         for event in pygame.event.get():
             # questo controllo dell'evento serve a terminare il
@@ -27,16 +26,14 @@ def showSplashScreen():
                 pygame.quit()
                 sys.exit()
 
-        if display_splash_screen % random.randint(10, 40) == 1:
+        if display_splash_screen % random.randint(10, 30) == 1:
             if len(first_string) != len(GAME_NAME):
                 first_string += GAME_NAME[len(first_string)]
-
-                audio_keyboard = pygame.mixer.Sound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".mp3")
+                audio_keyboard = pygame.mixer.Sound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".wav")
                 pygame.mixer.Sound.play(audio_keyboard)
             elif len(second_stirng) != len(GAME_SUBTITLE):
                 second_stirng += GAME_SUBTITLE[len(second_stirng)]
-
-                audio_keyboard = pygame.mixer.Sound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".mp3")
+                audio_keyboard = pygame.mixer.Sound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".wav")
                 pygame.mixer.Sound.play(audio_keyboard)
 
         # ovverwrite prev font element to have bigger dimension
