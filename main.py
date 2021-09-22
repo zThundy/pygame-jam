@@ -1,12 +1,11 @@
 import sys, pygame, time, math, random
 from pygame.locals import *
 
-from player import Player
 from events import *
-from level import Level
+from level import Level, Player
 from display import *
 from utils import *
-from options import Options
+from options import Options, Sounds
 
 size = width, height = 1920, 1080
 SETTINGS_TITLE = "Settings"
@@ -16,10 +15,13 @@ GAME_SUBTITLE = "Un gioco brutto fatto da poppity"
 
 MAIN_THEME_STARTED = False
 
+MAIN_COLOR = (50, 255, 50)
+
 # constant variable
 SCREEN = 0
 FONT = 0
 OPTIONS = Options()
+SOUNDS = Sounds()
 
 def showSplashScreen():
     # access to global variables
@@ -35,26 +37,21 @@ def showSplashScreen():
         # every element on the screen
         SCREEN.fill((0, 0, 0))
 
-        # check events.py to see the executed code
-        checkForQuitEvent()
-
-        if random.randint(0, 100) > 80:
+        if random.randint(0, 100) > 85:
             if len(first_string) != len(GAME_TITLE):
                 first_string += GAME_TITLE[len(first_string)]
-                audio_keyboard = pygame.mixer.Sound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".wav")
-                pygame.mixer.Sound.play(audio_keyboard)
+                SOUNDS.playSound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".wav")
             elif len(second_stirng) != len(GAME_SUBTITLE):
                 second_stirng += GAME_SUBTITLE[len(second_stirng)]
-                audio_keyboard = pygame.mixer.Sound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".wav")
-                pygame.mixer.Sound.play(audio_keyboard)
+                SOUNDS.playSound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".wav")
 
         # ovverwrite prev font element to have bigger dimension
         FONT = pygame.font.Font("./fonts/game_over.ttf", 250)
-        main_title = FONT.render(first_string, True, (50, 255, 50))
+        main_title = FONT.render(first_string, True, MAIN_COLOR)
         SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 150)))
         
         FONT = pygame.font.Font("./fonts/game_over.ttf", 150)
-        main_subtitle = FONT.render(second_stirng, True, (50, 255, 50))
+        main_subtitle = FONT.render(second_stirng, True, MAIN_COLOR)
         SCREEN.blit(main_subtitle, (SCREEN.get_width()/2 - main_subtitle.get_width()/2, main_title.get_height() + SCREEN.get_height()/2 - (main_subtitle.get_height()/2 + 150)))
 
         # update display
@@ -78,8 +75,7 @@ def showTitleScreen(canClick = False):
 
     if not MAIN_THEME_STARTED:
         MAIN_THEME_STARTED = True
-        pygame.mixer.music.load("./sounds/main_theme.mp3")
-        pygame.mixer.music.play(-1)
+        SOUNDS.playMusic("./sounds/main_theme.mp3", True)
 
     count = 0
     first_button_sprite = ""
@@ -99,44 +95,39 @@ def showTitleScreen(canClick = False):
         
         # draw game title
         FONT = pygame.font.Font("./fonts/game_over.ttf", 250)
-        main_title = FONT.render(GAME_NAME, True, (50, 255, 50))
+        main_title = FONT.render(GAME_NAME, True, MAIN_COLOR)
         SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 200) + math.sin(time.time()*8)*8))
         
         if count > 200:
             if count == 201:
-                button_sound = pygame.mixer.Sound("./sounds/button_show_sound.wav")
-                pygame.mixer.Sound.play(button_sound)
+                SOUNDS.playSound("./sounds/button_show_sound.wav")
             second_button_sprite = pygame.image.load("./sprites/buttons/play.png")
             SCREEN.blit(second_button_sprite, (SCREEN.get_width()/2 - second_button_sprite.get_width()/2, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
             if checkCollisions(mouseX, mouseY, 3, 3, SCREEN.get_width()/2 - second_button_sprite.get_width()/2, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100, second_button_sprite.get_width(), second_button_sprite.get_height()):
                 second_button_sprite = pygame.image.load("./sprites/buttons/play_dark.png")
                 SCREEN.blit(second_button_sprite, (SCREEN.get_width()/2 - second_button_sprite.get_width()/2, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
                 if (mouseClickEvent() and canClick):
-                    button_sound = pygame.mixer.Sound("./sounds/button_press_sound.wav")
-                    pygame.mixer.Sound.play(button_sound)
+                    SOUNDS.playSound("./sounds/button_press_sound.wav")
                     pygame.time.delay(1000)
-                    pygame.mixer.music.stop()
+                    SOUNDS.stopMusic()
                     titleScreen = False
 
         if count > 250:
             if count == 251:
-                button_sound = pygame.mixer.Sound("./sounds/button_show_sound.wav")
-                pygame.mixer.Sound.play(button_sound)
+                SOUNDS.playSound("./sounds/button_show_sound.wav")
             first_button_sprite = pygame.image.load("./sprites/buttons/settings.png")
             SCREEN.blit(first_button_sprite, ((SCREEN.get_width()/2 - second_button_sprite.get_width()/2) - 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
             if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - second_button_sprite.get_width()/2) - 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100, first_button_sprite.get_width(), first_button_sprite.get_height()):
                 first_button_sprite = pygame.image.load("./sprites/buttons/settings_dark.png")
                 SCREEN.blit(first_button_sprite, ((SCREEN.get_width()/2 - second_button_sprite.get_width()/2) - 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
                 if (mouseClickEvent() and canClick):
-                    button_sound = pygame.mixer.Sound("./sounds/button_press_sound.wav")
-                    pygame.mixer.Sound.play(button_sound)
+                    SOUNDS.playSound("./sounds/button_press_sound.wav")
                     titleScreen = False
                     showSettingsScreen()
         
         if count > 300:
             if count == 301:
-                button_sound = pygame.mixer.Sound("./sounds/button_show_sound.wav")
-                pygame.mixer.Sound.play(button_sound)
+                SOUNDS.playSound("./sounds/button_show_sound.wav")
                 canClick = True
             third_button_sprite = pygame.image.load("./sprites/buttons/exit.png")
             SCREEN.blit(third_button_sprite, ((SCREEN.get_width()/2 - second_button_sprite.get_width()/2) + 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
@@ -144,8 +135,7 @@ def showTitleScreen(canClick = False):
                 third_button_sprite = pygame.image.load("./sprites/buttons/exit_dark.png")
                 SCREEN.blit(third_button_sprite, ((SCREEN.get_width()/2 - second_button_sprite.get_width()/2) + 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
                 if (mouseClickEvent() and canClick):
-                    button_sound = pygame.mixer.Sound("./sounds/button_press_sound.wav")
-                    pygame.mixer.Sound.play(button_sound)
+                    SOUNDS.playSound("./sounds/button_press_sound.wav")
                     pygame.time.delay(1000)
                     pygame.quit()
                     sys.exit()
@@ -166,6 +156,7 @@ def showSettingsScreen():
     global SCREEN
     global FONT
     global OPTIONS
+    global MAIN_THEME_STARTED
 
     while True:
         # fill every time the screen with black color to reset
@@ -180,58 +171,91 @@ def showSettingsScreen():
 
         # draw settings page title
         FONT = pygame.font.Font("./fonts/game_over.ttf", 250)
-        main_title = FONT.render(SETTINGS_TITLE, True, (50, 255, 50))
+        main_title = FONT.render(SETTINGS_TITLE, True, MAIN_COLOR)
         SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 400) + math.sin(time.time()*8)*8))
 
         # fullscreen option
         FONT = pygame.font.Font("./fonts/game_over.ttf", 100)
-        main_title = FONT.render("Fullscreen", True, (50, 255, 50))
+        main_title = FONT.render("Fullscreen", True, MAIN_COLOR)
         SCREEN.blit(main_title, (SCREEN.get_width()/2 - 50, SCREEN.get_height()/2 - (main_title.get_height()/2 + 200)))
 
         if OPTIONS.getValue("fullscreen"):
-            pygame.draw.rect(SCREEN, (50, 255, 50), (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 180), main_title.get_height()/2, main_title.get_height()/2))
+            pygame.draw.rect(SCREEN, MAIN_COLOR, (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 180), main_title.get_height()/2, main_title.get_height()/2))
         else:
-            pygame.draw.rect(SCREEN, (50, 255, 50), (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 180), main_title.get_height()/2, main_title.get_height()/2), 3)
-
+            pygame.draw.rect(SCREEN, MAIN_COLOR, (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 180), main_title.get_height()/2, main_title.get_height()/2), 3)
+        
+        if checkCollisions(mouseX, mouseY, 3, 3, SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 180), main_title.get_height()/2, main_title.get_height()/2):
+            if mouseClickEvent():
+                OPTIONS.setValue("fullscreen", not OPTIONS.getValue("fullscreen"))
+                SOUNDS.playSound("./sounds/button_press_settings_sound.wav")
 
         # vsync option
         FONT = pygame.font.Font("./fonts/game_over.ttf", 100)
-        main_title = FONT.render("VSync", True, (50, 255, 50))
+        main_title = FONT.render("VSync", True, MAIN_COLOR)
         SCREEN.blit(main_title, (SCREEN.get_width()/2 - 50, SCREEN.get_height()/2 - (main_title.get_height()/2 + 150)))
 
         if OPTIONS.getValue("vsync"):
-            pygame.draw.rect(SCREEN, (50, 255, 50), (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 130), main_title.get_height()/2, main_title.get_height()/2))
+            pygame.draw.rect(SCREEN, MAIN_COLOR, (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 130), main_title.get_height()/2, main_title.get_height()/2))
         else:
-            pygame.draw.rect(SCREEN, (50, 255, 50), (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 130), main_title.get_height()/2, main_title.get_height()/2), 3)
+            pygame.draw.rect(SCREEN, MAIN_COLOR, (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 130), main_title.get_height()/2, main_title.get_height()/2), 3)
+
+        if checkCollisions(mouseX, mouseY, 3, 3, SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 130), main_title.get_height()/2, main_title.get_height()/2):
+            if mouseClickEvent():
+                OPTIONS.setValue("vsync", not OPTIONS.getValue("vsync"))
+                SOUNDS.playSound("./sounds/button_press_settings_sound.wav")
 
         # music option
         FONT = pygame.font.Font("./fonts/game_over.ttf", 100)
-        main_title = FONT.render("Music", True, (50, 255, 50))
+        main_title = FONT.render("Music", True, MAIN_COLOR)
         SCREEN.blit(main_title, (SCREEN.get_width()/2 - 50, SCREEN.get_height()/2 - (main_title.get_height()/2 + 100)))
 
         if OPTIONS.getValue("music"):
-            pygame.draw.rect(SCREEN, (50, 255, 50), (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 80), main_title.get_height()/2, main_title.get_height()/2))
+            pygame.draw.rect(SCREEN, MAIN_COLOR, (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 80), main_title.get_height()/2, main_title.get_height()/2))
         else:
-            pygame.draw.rect(SCREEN, (50, 255, 50), (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 80), main_title.get_height()/2, main_title.get_height()/2), 3)
+            pygame.draw.rect(SCREEN, MAIN_COLOR, (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 80), main_title.get_height()/2, main_title.get_height()/2), 3)
+
+        if checkCollisions(mouseX, mouseY, 3, 3, SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 80), main_title.get_height()/2, main_title.get_height()/2):
+            if mouseClickEvent():
+                OPTIONS.setValue("music", not OPTIONS.getValue("music"))
+                SOUNDS.playSound("./sounds/button_press_settings_sound.wav")
+                if MAIN_THEME_STARTED:
+                    MAIN_THEME_STARTED = False
+                    SOUNDS.stopMusic()
 
         # sounds option
         FONT = pygame.font.Font("./fonts/game_over.ttf", 100)
-        main_title = FONT.render("Sounds", True, (50, 255, 50))
+        main_title = FONT.render("Sounds", True, MAIN_COLOR)
         SCREEN.blit(main_title, (SCREEN.get_width()/2 - 50, SCREEN.get_height()/2 - (main_title.get_height()/2 + 50)))
 
         if OPTIONS.getValue("sound"):
-            pygame.draw.rect(SCREEN, (50, 255, 50), (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 30), main_title.get_height()/2, main_title.get_height()/2))
+            pygame.draw.rect(SCREEN, MAIN_COLOR, (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 30), main_title.get_height()/2, main_title.get_height()/2))
         else:
-            pygame.draw.rect(SCREEN, (50, 255, 50), (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 30), main_title.get_height()/2, main_title.get_height()/2), 3)
+            pygame.draw.rect(SCREEN, MAIN_COLOR, (SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 30), main_title.get_height()/2, main_title.get_height()/2), 3)
 
-        back_button_sprite = pygame.image.load("./sprites/buttons/exit.png")
-        SCREEN.blit(back_button_sprite, ((SCREEN.get_width()/2 - back_button_sprite.get_width()/2) - 400, (SCREEN.get_height()/2 - back_button_sprite.get_height()/2) + 100))
-        if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - back_button_sprite.get_width()/2) - 400, (SCREEN.get_height()/2 - back_button_sprite.get_height()/2) + 100, back_button_sprite.get_width(), back_button_sprite.get_height()):
-            back_button_sprite = pygame.image.load("./sprites/buttons/exit_dark.png")
-            SCREEN.blit(back_button_sprite, ((SCREEN.get_width()/2 - back_button_sprite.get_width()/2) - 400, (SCREEN.get_height()/2 - back_button_sprite.get_height()/2) + 100))
+        if checkCollisions(mouseX, mouseY, 3, 3, SCREEN.get_width()/2 - 100, SCREEN.get_height()/2 - (main_title.get_height()/2 + 30), main_title.get_height()/2, main_title.get_height()/2):
             if mouseClickEvent():
-                button_sound = pygame.mixer.Sound("./sounds/button_press_sound.wav")
-                pygame.mixer.Sound.play(button_sound)
+                OPTIONS.setValue("sound", not OPTIONS.getValue("sound"))
+                SOUNDS.playSound("./sounds/button_press_settings_sound.wav")
+
+        # render back to main screen button
+        back_button_sprite = pygame.image.load("./sprites/buttons/exit.png")
+        SCREEN.blit(back_button_sprite, ((SCREEN.get_width()/2 - back_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - back_button_sprite.get_height()/2) + 100))
+        if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - back_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - back_button_sprite.get_height()/2) + 100, back_button_sprite.get_width(), back_button_sprite.get_height()):
+            back_button_sprite = pygame.image.load("./sprites/buttons/exit_dark.png")
+            SCREEN.blit(back_button_sprite, ((SCREEN.get_width()/2 - back_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - back_button_sprite.get_height()/2) + 100))
+            if mouseClickEvent():
+                SOUNDS.playSound("./sounds/button_press_sound.wav")
+                showTitleScreen(True)
+                break
+
+        # render apply button
+        apply_button_sprite = pygame.image.load("./sprites/buttons/exit.png")
+        SCREEN.blit(apply_button_sprite, ((SCREEN.get_width()/2 - apply_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - apply_button_sprite.get_height()/2) + 100))
+        if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - apply_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - apply_button_sprite.get_height()/2) + 100, apply_button_sprite.get_width(), apply_button_sprite.get_height()):
+            apply_button_sprite = pygame.image.load("./sprites/buttons/exit_dark.png")
+            SCREEN.blit(apply_button_sprite, ((SCREEN.get_width()/2 - apply_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - apply_button_sprite.get_height()/2) + 100))
+            if mouseClickEvent():
+                SOUNDS.playSound("./sounds/button_press_sound.wav")
                 showTitleScreen(True)
                 break
 
@@ -249,8 +273,7 @@ def gameThread():
     player = Player(SCREEN)
     level = Level(SCREEN)
 
-    pygame.mixer.music.load("./sounds/game_theme.mp3")
-    pygame.mixer.music.play()
+    SOUNDS.playMusic("./sounds/game_theme.mp3", True)
 
     # this function ready the level generator
     # and creates a grid of elements with their images inside
@@ -292,10 +315,10 @@ def main():
     # pygame.display.set_icon("./sprites/test.png")
 
     # show splash screen png
-    showSplashScreen()
+    # showSplashScreen()
 
     # show title screen after splash screen
-    showTitleScreen()
+    # showTitleScreen()
 
     # start the game if the showTitleScreen thread is broken
     gameThread()
