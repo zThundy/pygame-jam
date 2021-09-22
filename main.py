@@ -176,7 +176,7 @@ def gameThread():
     while True:
         # fill every time the screen with black color to reset
         # every element on the screen
-        SCREEN.fill((0, 0, 0))
+        SCREEN.fill((255, 255, 255))
 
         # check events.py to see the executed code
         checkForQuitEvent()
@@ -186,9 +186,6 @@ def gameThread():
 
         # draw grid
         level.generateWalls()
-
-        # draw entity on screen
-        SCREEN.blit(player.getCurrentSprite(), player.getPosition())
 
         # update display
         pygame.display.update()
