@@ -39,22 +39,29 @@ class Level:
 
                 # drawing of corners
                 if (x == 0 and y == 0):
-                    cornerSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
-                    cornerSprite = pygame.transform.rotate(cornerSprite, 180)
+                    choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 180)
                     self.grid[(x, y)] = choosenSprite
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y == 0):
-                    cornerSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
-                    cornerSprite = pygame.transform.rotate(cornerSprite, 90)
+                    choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 90)
                     self.grid[(x, y)] = choosenSprite
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y == (self.screen_dimensions[1] - self.blockSize)):
-                    cornerSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
-                    cornerSprite = pygame.transform.rotate(cornerSprite, 0)
+                    choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 0)
                     self.grid[(x, y)] = choosenSprite
                 if (x == 0 and y == (self.screen_dimensions[1] - self.blockSize)):
-                    cornerSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
-                    cornerSprite = pygame.transform.rotate(cornerSprite, 270)
+                    choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 270)
+                    self.grid[(x, y)] = choosenSprite
+
+                # drawing of door
+                if (x == 0 and y == (self.screen_dimensions[1] - self.blockSize)/2):
+                    choosenSprite = pygame.transform.scale(self.doorSprite, (self.blockSize, self.blockSize))
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 270)
                     self.grid[(x, y)] = choosenSprite
 
     def generateWalls(self):
         for tile in self.grid:
-            print(tile)
+            current_tile = self.grid[tile]
+            self.screen.blit(current_tile, (tile[0], tile[1]))

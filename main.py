@@ -163,7 +163,7 @@ def gameThread():
     global SCREEN
     global FONT
 
-    player = Player()
+    player = Player(SCREEN)
     level = Level(SCREEN)
 
     pygame.mixer.music.load("./sounds/game_theme.mp3")
@@ -212,10 +212,10 @@ def main():
     # pygame.display.set_icon("./sprites/test.png")
 
     # show splash screen png
-    showSplashScreen()
+    # showSplashScreen()
 
     # show title screen after splash screen
-    showTitleScreen()
+    # showTitleScreen()
 
     # start the game if the showTitleScreen thread is broken
     gameThread()
