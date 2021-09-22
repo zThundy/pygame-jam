@@ -5,7 +5,7 @@ from player import Player
 from events import *
 from level import Level
 
-size = width, height = 1024, 768
+size = width, height = 1920, 1080
 GAME_NAME = "Er tecnico"
 GAME_SUBTITLE = "Un gioco brutto fatto da poppity"
 
@@ -56,9 +56,44 @@ def showSplashScreen():
 
 
 def showTitleScreen():
+    titleScreen = True
+    pygame.time.delay(2000)
+
+    main_theme = pygame.mixer.Sound("./sounds/main_theme.mp3")
+    pygame.mixer.Sound.play(main_theme)
+    last_time = 0
+    dt = 0
+
+    while titleScreen:
+        # this is used to move the title screen up and down
+        dt = time.time() - last_time
+        dt *= 60
+        last_time = time.time()
+        # fill every time the screen with black color to reset
+        # every element on the screen
+        SCREEN.fill((0, 0, 0))
+        # check events.py to see the executed code
+        checkForQuitEvent()
+        
+        # draw game title
+        FONT = pygame.font.Font("./fonts/game_over.ttf", 250)
+        main_title = FONT.render(GAME_NAME, True, (50, 255, 50))
+        SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 200) + math.sin(time.time()*5)*5))
+
+        mouseX,mouseY = pygame.mouse.get_pos()
+        # update display
+        pygame.display.update()
+        # wait for 10 seconds
+        pygame.time.delay(10)
+
+
+
+def gameThread():
     player = Player()
     level = Level(SCREEN)
     while True:
+        # fill every time the screen with black color to reset
+        # every element on the screen
         SCREEN.fill((0, 0, 0))
         # check events.py to see the executed code
         checkForQuitEvent()
@@ -98,6 +133,9 @@ def main():
 
     # show title screen after splash screen
     showTitleScreen()
+
+    # start the game if the showTitleScreen thread is broken
+    gameThread()
 
 if __name__ == "__main__":
     main()
