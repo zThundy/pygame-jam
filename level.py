@@ -28,12 +28,8 @@ class Level:
 
         for x in range(0, self.screen_dimensions[0], blockSize):
             for y in range(0, self.screen_dimensions[1], blockSize):
-                if (x == 0 and y == 0):
-                    cornerSprite = pygame.transform.scale(self.cornerSprite, (64, 64))
-                    cornerSprite = pygame.transform.rotate(cornerSprite, 180)
-                    self.screen.blit(cornerSprite, (x, y))
-                if (y == 0 and x != 0):
-                    # if we are filling the upper side of the screen
+                # drawing of straight walls
+                if (y == 0 and x != 0) and (x < (self.screen_dimensions[0] - blockSize)):
                     normalSprite = pygame.transform.scale(self.normalSprite, (64, 64))
                     normalSprite = pygame.transform.rotate(normalSprite, 180)
                     self.screen.blit(normalSprite, (x, y))
@@ -41,3 +37,29 @@ class Level:
                     normalSprite = pygame.transform.scale(self.normalSprite, (64, 64))
                     normalSprite = pygame.transform.rotate(normalSprite, 270)
                     self.screen.blit(normalSprite, (x, y))
+                if (x == (self.screen_dimensions[0] - blockSize) and y < (self.screen_dimensions[1] - blockSize)):
+                    normalSprite = pygame.transform.scale(self.normalSprite, (64, 64))
+                    normalSprite = pygame.transform.rotate(normalSprite, 90)
+                    self.screen.blit(normalSprite, (x, y))
+                if (x < (self.screen_dimensions[0] - blockSize) and y == (self.screen_dimensions[1] - blockSize)):
+                    normalSprite = pygame.transform.scale(self.normalSprite, (64, 64))
+                    normalSprite = pygame.transform.rotate(normalSprite, 0)
+                    self.screen.blit(normalSprite, (x, y))
+
+                # drawing of corners
+                if (x == 0 and y == 0):
+                    cornerSprite = pygame.transform.scale(self.cornerSprite, (64, 64))
+                    cornerSprite = pygame.transform.rotate(cornerSprite, 180)
+                    self.screen.blit(cornerSprite, (x, y))
+                if (x == (self.screen_dimensions[0] - blockSize) and y == 0):
+                    cornerSprite = pygame.transform.scale(self.cornerSprite, (64, 64))
+                    cornerSprite = pygame.transform.rotate(cornerSprite, 90)
+                    self.screen.blit(cornerSprite, (x, y))
+                if (x == (self.screen_dimensions[0] - blockSize) and y == (self.screen_dimensions[1] - blockSize)):
+                    cornerSprite = pygame.transform.scale(self.cornerSprite, (64, 64))
+                    cornerSprite = pygame.transform.rotate(cornerSprite, 0)
+                    self.screen.blit(cornerSprite, (x, y))
+                if (x == 0 and y == (self.screen_dimensions[1] - blockSize)):
+                    cornerSprite = pygame.transform.scale(self.cornerSprite, (64, 64))
+                    cornerSprite = pygame.transform.rotate(cornerSprite, 270)
+                    self.screen.blit(cornerSprite, (x, y))

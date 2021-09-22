@@ -5,7 +5,7 @@ from player import Player
 from events import *
 from level import Level
 
-size = width, height = 960, 540
+size = width, height = 1024, 768
 GAME_NAME = "Er tecnico"
 GAME_SUBTITLE = "Un gioco brutto fatto da poppity"
 
@@ -65,12 +65,12 @@ def showTitleScreen():
         # check if user press a movement key and move the player
         player.checkPlayerMovements()
 
+        # draw grid
+        level.generateWalls()
+
         # draw entity on screen
         SCREEN.blit(player.getCurrentSprite(), player.getPosition())
 
-        # draw grid
-        level.generateWalls()
-        
         # update display
         pygame.display.update()
         # wait for 10 seconds
