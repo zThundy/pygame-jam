@@ -21,7 +21,7 @@ class Level:
         return self.tiles[pygame.Vector2(x, y)] != None
 
     def generateWalls(self):
-        blockSize = 64 # Set the size of the grid block
+        blockSize = 40 # Set the size of the grid block
 
         cornerSprite = None
         normalSprite = None

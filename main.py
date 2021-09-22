@@ -57,34 +57,35 @@ def showSplashScreen():
 
 def showTitleScreen():
     titleScreen = True
+    SCREEN.fill((0, 0, 0))
     pygame.time.delay(2000)
 
     main_theme = pygame.mixer.Sound("./sounds/main_theme.mp3")
     pygame.mixer.Sound.play(main_theme)
-    last_time = 0
-    dt = 0
+
+    count = 0
 
     while titleScreen:
-        # this is used to move the title screen up and down
-        dt = time.time() - last_time
-        dt *= 60
-        last_time = time.time()
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
         # check events.py to see the executed code
         checkForQuitEvent()
+
+        # get mouse position to check if player is clicking on button
+        mouseX, mouseY = pygame.mouse.get_pos()
         
         # draw game title
         FONT = pygame.font.Font("./fonts/game_over.ttf", 250)
         main_title = FONT.render(GAME_NAME, True, (50, 255, 50))
-        SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 200) + math.sin(time.time()*5)*5))
+        SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 200) + math.sin(time.time()*8)*8))
 
-        mouseX,mouseY = pygame.mouse.get_pos()
         # update display
         pygame.display.update()
         # wait for 10 seconds
         pygame.time.delay(10)
+
+        count += 1
 
 
 
@@ -132,7 +133,7 @@ def main():
     # showSplashScreen()
 
     # show title screen after splash screen
-    showTitleScreen()
+    # showTitleScreen()
 
     # start the game if the showTitleScreen thread is broken
     gameThread()

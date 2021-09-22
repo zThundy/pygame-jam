@@ -15,3 +15,10 @@ def checkForQuitEvent():
     if keys[K_ESCAPE]:
         pygame.quit()
         sys.exit()
+
+def mouseClickEvent():
+    for event in pygame.event.get():
+        # with this we check if the player press the left mouse button
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            return True
+        return False
