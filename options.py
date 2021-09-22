@@ -2,7 +2,7 @@ import pygame
 
 class Options:
     options = {
-        "sound": False,
+        "sound": True,
         "music": False,
         "fullscreen": False,
         "vsync": False

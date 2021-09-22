@@ -1,6 +1,7 @@
 import pygame, random
 from pygame.locals import *
 from utils import *
+from events import isInteractionPressed
 
 class Level:
     screen_dimensions = width, height = 0, 0
@@ -56,28 +57,28 @@ class Level:
                 # drawing of corners
                 if (x == 0 and y == 0):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
-                    choosenSprite = pygame.transform.rotate(choosenSprite, 180)
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 0)
                     self.grid[(x, y)] = {}
                     self.grid[(x, y)]["sprite"] = choosenSprite
                     self.grid[(x, y)]["collision"] = True
                     found = True
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y == 0):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
-                    choosenSprite = pygame.transform.rotate(choosenSprite, 90)
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 270)
                     self.grid[(x, y)] = {}
                     self.grid[(x, y)]["sprite"] = choosenSprite
                     self.grid[(x, y)]["collision"] = True
                     found = True
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y == (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
-                    choosenSprite = pygame.transform.rotate(choosenSprite, 0)
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 180)
                     self.grid[(x, y)] = {}
                     self.grid[(x, y)]["sprite"] = choosenSprite
                     self.grid[(x, y)]["collision"] = True
                     found = True
                 if (x == 0 and y == (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
-                    choosenSprite = pygame.transform.rotate(choosenSprite, 270)
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 90)
                     self.grid[(x, y)] = {}
                     self.grid[(x, y)]["sprite"] = choosenSprite
                     self.grid[(x, y)]["collision"] = True
@@ -189,4 +190,15 @@ class Player(Level):
             if self.grid[tile]["collision"] and checkCollisions(self.position[0] + x_off_2, self.position[1] + y_off_2, self.currentSprite.get_width() + x_off, self.currentSprite.get_height() + y_off, tile[0], tile[1], current_tile.get_width(), current_tile.get_height()):
                 return True
         return False
+
+    def getObjectInCollision(self):
+        # todo: check what's near the player
+        # todo: add metadata to the grid tile
+        print("lol")
+
+    def checkInteraction(self):
+        if isInteractionPressed():
+            print("lol")
+            # do stuff and maybe call a nested class to do interactions
+            # and tasks
 

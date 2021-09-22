@@ -3,7 +3,6 @@ from pygame.locals import *
 
 from events import *
 from level import Level, Player
-from display import *
 from utils import *
 from options import Options, Sounds
 
@@ -22,6 +21,7 @@ SCREEN = 0
 FONT = 0
 OPTIONS = Options()
 SOUNDS = Sounds()
+CLOCK = pygame.time.Clock()
 
 def showSplashScreen():
     # access to global variables
@@ -56,8 +56,9 @@ def showSplashScreen():
 
         # update display
         pygame.display.update()
-        # wait for 10 seconds
-        pygame.time.delay(10)
+        # limit the number of fps to prevent
+        # problems :)
+        CLOCK.tick(60)
 
         if len(first_string) == len(GAME_TITLE) and len(second_stirng) == len(GAME_SUBTITLE):  
             pygame.time.delay(2500)
@@ -142,13 +143,16 @@ def showTitleScreen(canClick = False):
 
         # update display
         pygame.display.update()
-        # wait for 10 seconds
-        pygame.time.delay(10)
+        # limit the number of fps to prevent
+        # problems :)
+        CLOCK.tick(60)
 
         if not canClick:
             count += 1
         else:
             count = 400
+
+    gameThread()
 
 
 def showSettingsScreen():
@@ -188,6 +192,7 @@ def showSettingsScreen():
             if mouseClickEvent():
                 OPTIONS.setValue("fullscreen", not OPTIONS.getValue("fullscreen"))
                 SOUNDS.playSound("./sounds/button_press_settings_sound.wav")
+                pygame.display.toggle_fullscreen()
 
         # vsync option
         FONT = pygame.font.Font("./fonts/game_over.ttf", 100)
@@ -261,9 +266,9 @@ def showSettingsScreen():
 
         # update display
         pygame.display.update()
-        # wait for 10 seconds
-        pygame.time.delay(10)
-
+        # limit the number of fps to prevent
+        # problems :)
+        CLOCK.tick(60)
 
 def gameThread():
     # access to global variables
@@ -272,6 +277,10 @@ def gameThread():
 
     player = Player(SCREEN)
     level = Level(SCREEN)
+
+    game_over = False
+    start_ticks = pygame.time.get_ticks()
+    max_seconds = 240
 
     SOUNDS.playMusic("./sounds/game_theme.mp3", True)
 
@@ -287,16 +296,68 @@ def gameThread():
         # check events.py to see the executed code
         checkForQuitEvent()
 
+        # get mouse position to check if player is clicking on button
+        mouseX, mouseY = pygame.mouse.get_pos()
+
         # draw grid
         level.generateWalls()
+        
+        if game_over:
+            s = pygame.Surface(size, SRCALPHA)
+            s.fill((0, 0, 0, 200))
+            SCREEN.blit(s, (0, 0))
 
-        # check if user press a movement key and move the player
-        player.checkPlayerMovements()
+            # draw settings page title
+            FONT = pygame.font.Font("./fonts/game_over.ttf", 250)
+            main_title = FONT.render("Game Over", True, MAIN_COLOR)
+            SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 200) + math.sin(time.time()*8)*8))
+
+            # render retray gameover button
+            retry_button_sprite = pygame.image.load("./sprites/buttons/back.png")
+            SCREEN.blit(retry_button_sprite, ((SCREEN.get_width()/2 - retry_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - retry_button_sprite.get_height()/2) + 100))
+            if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - retry_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - retry_button_sprite.get_height()/2) + 100, retry_button_sprite.get_width(), retry_button_sprite.get_height()):
+                retry_button_sprite = pygame.image.load("./sprites/buttons/back_dark.png")
+                SCREEN.blit(retry_button_sprite, ((SCREEN.get_width()/2 - retry_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - retry_button_sprite.get_height()/2) + 100))
+                if mouseClickEvent():
+                    SOUNDS.playSound("./sounds/button_press_sound.wav")
+                    showTitleScreen()
+                    break
+
+            # render apply button
+            exit_button_sprite = pygame.image.load("./sprites/buttons/exit.png")
+            SCREEN.blit(exit_button_sprite, ((SCREEN.get_width()/2 - exit_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - exit_button_sprite.get_height()/2) + 100))
+            if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - exit_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - exit_button_sprite.get_height()/2) + 100, exit_button_sprite.get_width(), exit_button_sprite.get_height()):
+                exit_button_sprite = pygame.image.load("./sprites/buttons/exit_dark.png")
+                SCREEN.blit(exit_button_sprite, ((SCREEN.get_width()/2 - exit_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - exit_button_sprite.get_height()/2) + 100))
+                if mouseClickEvent():
+                    SOUNDS.playSound("./sounds/button_press_sound.wav")
+                    pygame.time.delay(1000)
+                    pygame.quit()
+                    sys.exit()
+        else:
+            # check if user press a movement key and move the player
+            player.checkPlayerMovements()
+
+            # check if user interact with something
+            player.checkInteraction()
+
+            # check timer and draw on screen
+            seconds = (pygame.time.get_ticks() - start_ticks)/1000
+            remaining_seconds = time.strftime('%M:%S', time.gmtime(math.floor(max_seconds - seconds)))
+
+            pygame.draw.rect(SCREEN, (230, 230, 230), (SCREEN.get_width()/2 - 200, 20, 400, 70), 0, 20)
+            FONT = pygame.font.Font("./fonts/game_over.ttf", 100)
+            main_title = FONT.render("Time remaining: " + str(remaining_seconds), True, (0, 0, 0))
+            SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, 20))
+            
+            if math.floor(max_seconds - seconds) <= 0:
+                game_over = True
 
         # update display
         pygame.display.update()
-        # wait for 10 seconds
-        pygame.time.delay(10)
+        # limit the number of fps to prevent
+        # problems :)
+        CLOCK.tick(60)
 
 
 def main():
@@ -307,7 +368,6 @@ def main():
 
     # define screen dimensions and flags
     SCREEN = pygame.display.set_mode(size)
-    SCREEN = setFullScreen(SCREEN, size, False)
     pygame.display.set_caption(GAME_NAME)
 
     # fill both fake and real screen with black background
@@ -320,7 +380,6 @@ def main():
     # show title screen after splash screen
     # showTitleScreen()
 
-    # start the game if the showTitleScreen thread is broken
     gameThread()
 
 if __name__ == "__main__":
