@@ -59,8 +59,9 @@ def showTitleScreen():
     while True:
         SCREEN.fill((0, 0, 0))
         # check events.py to see the executed code
-        new_position = checkForQuitEvent()
-        player.setPosition(new_position[0], new_position[1])
+        checkForQuitEvent()
+        # check if user press a movement key and move the player
+        player.checkPlayerMovements()
 
         # draw entity on screen
         SCREEN.blit(player.getCurrentSprite(), player.getPosition())
