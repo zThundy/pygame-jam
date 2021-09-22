@@ -73,8 +73,8 @@ def showTitleScreen():
     SCREEN.fill((0, 0, 0))
     pygame.time.delay(2000)
 
-    main_theme = pygame.mixer.Sound("./sounds/main_theme.mp3")
-    pygame.mixer.Sound.play(main_theme)
+    main_theme = pygame.mixer.music.load("./sounds/main_theme.mp3")
+    pygame.mixer.music.play(-1)
 
     count = 0
     canClick = False
@@ -124,7 +124,9 @@ def showTitleScreen():
                 if (mouseClickEvent() and canClick):
                     button_sound = pygame.mixer.Sound("./sounds/button_press_sound.wav")
                     pygame.mixer.Sound.play(button_sound)
-                    print("playing")
+                    pygame.time.delay(1000)
+                    pygame.mixer.music.stop()
+                    titleScreen = False
         
         if count > 300:
             if count == 301:
