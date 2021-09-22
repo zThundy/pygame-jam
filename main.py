@@ -6,8 +6,9 @@ from events import *
 from level import Level
 from display import *
 
-size = width, height = 500, 500
+size = width, height = 1920, 1080
 GAME_NAME = "Er tecnico"
+GAME_TITLE = "Python Gamejam"
 GAME_SUBTITLE = "Un gioco brutto fatto da poppity"
 
 # constant variable
@@ -24,19 +25,16 @@ def showSplashScreen():
 
     # 4 secondi di attesa
     while display_splash_screen <= 5000:
-        # check if the window is beeing resized
-        for event in pygame.event.get():
-            if event.type == VIDEORESIZE:
-                SCREEN = pygame.display.set_mode(event.size, HWSURFACE | DOUBLEBUF | RESIZABLE)
-
+        # fill every time the screen with black color to reset
+        # every element on the screen
         SCREEN.fill((0, 0, 0))
 
         # check events.py to see the executed code
         checkForQuitEvent()
 
         if display_splash_screen % random.randint(10, 30) == 1:
-            if len(first_string) != len(GAME_NAME):
-                first_string += GAME_NAME[len(first_string)]
+            if len(first_string) != len(GAME_TITLE):
+                first_string += GAME_TITLE[len(first_string)]
                 audio_keyboard = pygame.mixer.Sound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".wav")
                 pygame.mixer.Sound.play(audio_keyboard)
             elif len(second_stirng) != len(GAME_SUBTITLE):
@@ -58,7 +56,7 @@ def showSplashScreen():
         # wait for 10 seconds
         pygame.time.delay(10)
 
-        if len(first_string) == len(GAME_NAME) and len(second_stirng) == len(GAME_SUBTITLE):  
+        if len(first_string) == len(GAME_TITLE) and len(second_stirng) == len(GAME_SUBTITLE):  
             pygame.time.delay(2500)
             break
         
@@ -78,13 +76,11 @@ def showTitleScreen():
     pygame.mixer.Sound.play(main_theme)
 
     count = 0
+    first_button_sprite = ""
+    second_button_sprite = ""
+    third_button_sprite = ""
 
     while titleScreen:
-        # check if the window is beeing resized
-        for event in pygame.event.get():
-            if event.type == VIDEORESIZE:
-                SCREEN = pygame.display.set_mode(event.size, HWSURFACE | DOUBLEBUF | RESIZABLE)
-
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
@@ -100,8 +96,28 @@ def showTitleScreen():
         main_title = FONT.render(GAME_NAME, True, (50, 255, 50))
         SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 200) + math.sin(time.time()*8)*8))
 
-        if count > 1999 and count < 2001:
-            print("ok")
+        if count > 250:
+            if count == 251:
+                button_sound = pygame.mixer.Sound("./sounds/button_show_sound.wav")
+                pygame.mixer.Sound.play(button_sound)
+            first_button_sprite = pygame.image.load("./sprites/buttons/settings.png")
+            SCREEN.blit(first_button_sprite, ((SCREEN.get_width()/2 - second_button_sprite.get_width()/2) - 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
+        
+        
+        if count > 200:
+            if count == 201:
+                button_sound = pygame.mixer.Sound("./sounds/button_show_sound.wav")
+                pygame.mixer.Sound.play(button_sound)
+            second_button_sprite = pygame.image.load("./sprites/buttons/play.png")
+            SCREEN.blit(second_button_sprite, (SCREEN.get_width()/2 - second_button_sprite.get_width()/2, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
+
+        
+        if count > 300:
+            if count == 301:
+                button_sound = pygame.mixer.Sound("./sounds/button_show_sound.wav")
+                pygame.mixer.Sound.play(button_sound)
+            third_button_sprite = pygame.image.load("./sprites/buttons/exit.png")
+            SCREEN.blit(third_button_sprite, ((SCREEN.get_width()/2 - second_button_sprite.get_width()/2) + 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
 
         # update display
         pygame.display.update()
@@ -149,7 +165,7 @@ def main():
     global SCREEN
 
     # define screen dimensions and flags
-    SCREEN = pygame.display.set_mode(size, HWSURFACE | DOUBLEBUF | RESIZABLE)
+    SCREEN = pygame.display.set_mode(size)
     SCREEN = setFullScreen(SCREEN, size, False)
     pygame.display.set_caption(GAME_NAME)
 
@@ -161,10 +177,10 @@ def main():
     FONT = pygame.font.Font("./fonts/game_over.ttf", 200)
 
     # show splash screen png
-    # showSplashScreen()
+    showSplashScreen()
 
     # show title screen after splash screen
-    # showTitleScreen()
+    showTitleScreen()
 
     # start the game if the showTitleScreen thread is broken
     gameThread()
