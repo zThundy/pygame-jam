@@ -33,7 +33,7 @@ def showSplashScreen():
         # check events.py to see the executed code
         checkForQuitEvent()
 
-        if display_splash_screen % random.randint(10, 30) == 1:
+        if display_splash_screen % random.randint(10, 20) == 1:
             if len(first_string) != len(GAME_TITLE):
                 first_string += GAME_TITLE[len(first_string)]
                 audio_keyboard = pygame.mixer.Sound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".wav")
@@ -206,7 +206,7 @@ def main():
     FONT = pygame.font.Font("./fonts/game_over.ttf", 200)
 
     # show splash screen png
-    # showSplashScreen()
+    showSplashScreen()
 
     # show title screen after splash screen
     showTitleScreen()
