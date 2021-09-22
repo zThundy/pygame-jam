@@ -73,7 +73,7 @@ def showTitleScreen():
     SCREEN.fill((0, 0, 0))
     pygame.time.delay(2000)
 
-    main_theme = pygame.mixer.music.load("./sounds/main_theme.mp3")
+    pygame.mixer.music.load("./sounds/main_theme.mp3")
     pygame.mixer.music.play(-1)
 
     count = 0
@@ -163,6 +163,9 @@ def gameThread():
 
     player = Player()
     level = Level(SCREEN)
+
+    pygame.mixer.music.load("./sounds/game_theme.mp3")
+    pygame.mixer.music.play()
 
     while True:
         # fill every time the screen with black color to reset
