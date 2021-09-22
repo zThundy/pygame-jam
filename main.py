@@ -5,6 +5,7 @@ from player import Player
 from events import *
 from level import Level
 from display import *
+from utils import *
 
 size = width, height = 1920, 1080
 GAME_NAME = "Er tecnico"
@@ -76,6 +77,7 @@ def showTitleScreen():
     pygame.mixer.Sound.play(main_theme)
 
     count = 0
+    canClick = False
     first_button_sprite = ""
     second_button_sprite = ""
     third_button_sprite = ""
@@ -102,6 +104,10 @@ def showTitleScreen():
                 pygame.mixer.Sound.play(button_sound)
             first_button_sprite = pygame.image.load("./sprites/buttons/settings.png")
             SCREEN.blit(first_button_sprite, ((SCREEN.get_width()/2 - second_button_sprite.get_width()/2) - 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
+            
+            if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - second_button_sprite.get_width()/2) - 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100, first_button_sprite.get_width(), first_button_sprite.get_height()):
+                first_button_sprite = pygame.image.load("./sprites/buttons/settings_dark.png")
+                SCREEN.blit(first_button_sprite, ((SCREEN.get_width()/2 - second_button_sprite.get_width()/2) - 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
         
         
         if count > 200:
@@ -110,21 +116,33 @@ def showTitleScreen():
                 pygame.mixer.Sound.play(button_sound)
             second_button_sprite = pygame.image.load("./sprites/buttons/play.png")
             SCREEN.blit(second_button_sprite, (SCREEN.get_width()/2 - second_button_sprite.get_width()/2, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
+            
+            if checkCollisions(mouseX, mouseY, 3, 3, SCREEN.get_width()/2 - second_button_sprite.get_width()/2, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100, second_button_sprite.get_width(), second_button_sprite.get_height()):
+                second_button_sprite = pygame.image.load("./sprites/buttons/play_dark.png")
+                SCREEN.blit(second_button_sprite, (SCREEN.get_width()/2 - second_button_sprite.get_width()/2, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
 
         
         if count > 300:
             if count == 301:
                 button_sound = pygame.mixer.Sound("./sounds/button_show_sound.wav")
                 pygame.mixer.Sound.play(button_sound)
+                canClick = True
             third_button_sprite = pygame.image.load("./sprites/buttons/exit.png")
             SCREEN.blit(third_button_sprite, ((SCREEN.get_width()/2 - second_button_sprite.get_width()/2) + 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
+            
+            if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - second_button_sprite.get_width()/2) + 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100, third_button_sprite.get_width(), third_button_sprite.get_height()):
+                third_button_sprite = pygame.image.load("./sprites/buttons/exit_dark.png")
+                SCREEN.blit(third_button_sprite, ((SCREEN.get_width()/2 - second_button_sprite.get_width()/2) + 400, (SCREEN.get_height()/2 - second_button_sprite.get_height()/2) + 100))
 
         # update display
         pygame.display.update()
         # wait for 10 seconds
         pygame.time.delay(10)
 
-        count += 1
+        if not canClick:
+            count += 1
+        else:
+            count = 400
 
 
 
@@ -177,7 +195,7 @@ def main():
     FONT = pygame.font.Font("./fonts/game_over.ttf", 200)
 
     # show splash screen png
-    showSplashScreen()
+    # showSplashScreen()
 
     # show title screen after splash screen
     showTitleScreen()
