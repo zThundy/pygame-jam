@@ -2,6 +2,7 @@ import sys, pygame, time, math, random
 from pygame.locals import *
 
 from player import Player
+from events import *
 
 size = width, height = 960, 540
 GAME_NAME = "Er tecnico"
@@ -21,12 +22,8 @@ def showSplashScreen():
         SCREEN.fill((0, 0, 0))
         display_splash_screen += 1
 
-        for event in pygame.event.get():
-            # questo controllo dell'evento serve a terminare il
-            # programma se l'utente preme la X di windows
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+        # check events.py to see the executed code
+        checkForQuitEvent()
 
         if display_splash_screen % random.randint(10, 30) == 1:
             if len(first_string) != len(GAME_NAME):
@@ -59,7 +56,19 @@ def showSplashScreen():
 
 def showTitleScreen():
     player = Player()
-    print(player)
+    while True:
+        SCREEN.fill((0, 0, 0))
+        # check events.py to see the executed code
+        new_position = checkForQuitEvent()
+        player.setPosition(new_position[0], new_position[1])
+
+        # draw entity on screen
+        SCREEN.blit(player.getCurrentSprite(), player.getPosition())
+        
+        # update display
+        pygame.display.update()
+        # wait for 10 seconds
+        pygame.time.delay(10)
 
 
 def main():
@@ -79,7 +88,7 @@ def main():
     FONT = pygame.font.Font("./fonts/game_over.ttf", 200)
 
     # show splash screen png
-    showSplashScreen()
+    # showSplashScreen()
 
     # show title screen after splash screen
     showTitleScreen()
