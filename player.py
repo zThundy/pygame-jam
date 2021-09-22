@@ -5,7 +5,7 @@ class Player:
     acceleration = 5
 
     position = pygame.Vector2()
-    position.xy = 200, 200
+    position.xy = 50, 50
     velocity = pygame.Vector2()
     velocity.xy = 3, 0
     rightSprite = pygame.image.load("./sprites/test.png")

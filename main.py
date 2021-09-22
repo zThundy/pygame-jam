@@ -4,24 +4,32 @@ from pygame.locals import *
 from player import Player
 from events import *
 from level import Level
+from display import *
 
-size = width, height = 1920, 1080
+size = width, height = 500, 500
 GAME_NAME = "Er tecnico"
 GAME_SUBTITLE = "Un gioco brutto fatto da poppity"
 
 # constant variable
-SCREEN = None
-FONT = None
+SCREEN = 0
+FONT = 0
 
 def showSplashScreen():
+    # access to global variables
+    global SCREEN
+
     display_splash_screen = 0
     first_string = ""
     second_stirng = ""
 
     # 4 secondi di attesa
     while display_splash_screen <= 5000:
+        # check if the window is beeing resized
+        for event in pygame.event.get():
+            if event.type == VIDEORESIZE:
+                SCREEN = pygame.display.set_mode(event.size, HWSURFACE | DOUBLEBUF | RESIZABLE)
+
         SCREEN.fill((0, 0, 0))
-        display_splash_screen += 1
 
         # check events.py to see the executed code
         checkForQuitEvent()
@@ -53,9 +61,15 @@ def showSplashScreen():
         if len(first_string) == len(GAME_NAME) and len(second_stirng) == len(GAME_SUBTITLE):  
             pygame.time.delay(2500)
             break
+        
+        # increment this counter to show the screen for a little bit more
+        display_splash_screen += 1
 
 
 def showTitleScreen():
+    # access to global variables
+    global SCREEN
+
     titleScreen = True
     SCREEN.fill((0, 0, 0))
     pygame.time.delay(2000)
@@ -66,9 +80,15 @@ def showTitleScreen():
     count = 0
 
     while titleScreen:
+        # check if the window is beeing resized
+        for event in pygame.event.get():
+            if event.type == VIDEORESIZE:
+                SCREEN = pygame.display.set_mode(event.size, HWSURFACE | DOUBLEBUF | RESIZABLE)
+
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
+
         # check events.py to see the executed code
         checkForQuitEvent()
 
@@ -80,6 +100,9 @@ def showTitleScreen():
         main_title = FONT.render(GAME_NAME, True, (50, 255, 50))
         SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 200) + math.sin(time.time()*8)*8))
 
+        if count > 1999 and count < 2001:
+            print("ok")
+
         # update display
         pygame.display.update()
         # wait for 10 seconds
@@ -90,14 +113,20 @@ def showTitleScreen():
 
 
 def gameThread():
+    # access to global variables
+    global SCREEN
+
     player = Player()
     level = Level(SCREEN)
+
     while True:
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
+
         # check events.py to see the executed code
         checkForQuitEvent()
+
         # check if user press a movement key and move the player
         player.checkPlayerMovements()
 
@@ -116,15 +145,17 @@ def gameThread():
 def main():
     pygame.init()
 
-    # access global variables
+    # access to global variables
     global SCREEN
-    global FONT
 
     # define screen dimensions and flags
-    SCREEN = pygame.display.set_mode(size, 0, 32)
+    SCREEN = pygame.display.set_mode(size, HWSURFACE | DOUBLEBUF | RESIZABLE)
+    SCREEN = setFullScreen(SCREEN, size, False)
     pygame.display.set_caption(GAME_NAME)
+
+    # fill both fake and real screen with black background
+    SCREEN.fill((0, 0, 0))
     # pygame.display.set_icon("./sprites/test.png")
-    SCREEN.fill((0,0,0))
 
     # use font pygame
     FONT = pygame.font.Font("./fonts/game_over.ttf", 200)

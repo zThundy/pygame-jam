@@ -1,9 +1,6 @@
 import pygame, sys
 from pygame.locals import *
 
-from player import Player
-player = Player()
-
 def checkForQuitEvent():
     keys = pygame.key.get_pressed()
     for event in pygame.event.get():
@@ -19,6 +16,6 @@ def checkForQuitEvent():
 def mouseClickEvent():
     for event in pygame.event.get():
         # with this we check if the player press the left mouse button
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        if event.type == MOUSEBUTTONDOWN and event.button == 1:
             return True
         return False
