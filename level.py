@@ -30,58 +30,78 @@ class Level:
                 # drawing of straight walls
                 if (y == 0 and x != 0) and (x < (self.screen_dimensions[0] - self.blockSize)):
                     choosenSprite = pygame.transform.rotate(choosenSprite, 180)
-                    self.grid[(x, y)] = choosenSprite
+                    self.grid[(x, y)] = {}
+                    self.grid[(x, y)]["sprite"] = choosenSprite
+                    self.grid[(x, y)]["collision"] = True
                     found = True
                 if (y != 0 and x == 0):
                     choosenSprite = pygame.transform.rotate(choosenSprite, 270)
-                    self.grid[(x, y)] = choosenSprite
+                    self.grid[(x, y)] = {}
+                    self.grid[(x, y)]["sprite"] = choosenSprite
+                    self.grid[(x, y)]["collision"] = True
                     found = True
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y < (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.rotate(choosenSprite, 90)
-                    self.grid[(x, y)] = choosenSprite
+                    self.grid[(x, y)] = {}
+                    self.grid[(x, y)]["sprite"] = choosenSprite
+                    self.grid[(x, y)]["collision"] = True
                     found = True
                 if (x < (self.screen_dimensions[0] - self.blockSize) and y == (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.rotate(choosenSprite, 0)
-                    self.grid[(x, y)] = choosenSprite
+                    self.grid[(x, y)] = {}
+                    self.grid[(x, y)]["sprite"] = choosenSprite
+                    self.grid[(x, y)]["collision"] = True
                     found = True
 
                 # drawing of corners
                 if (x == 0 and y == 0):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 180)
-                    self.grid[(x, y)] = choosenSprite
+                    self.grid[(x, y)] = {}
+                    self.grid[(x, y)]["sprite"] = choosenSprite
+                    self.grid[(x, y)]["collision"] = True
                     found = True
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y == 0):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 90)
-                    self.grid[(x, y)] = choosenSprite
+                    self.grid[(x, y)] = {}
+                    self.grid[(x, y)]["sprite"] = choosenSprite
+                    self.grid[(x, y)]["collision"] = True
                     found = True
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y == (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 0)
-                    self.grid[(x, y)] = choosenSprite
+                    self.grid[(x, y)] = {}
+                    self.grid[(x, y)]["sprite"] = choosenSprite
+                    self.grid[(x, y)]["collision"] = True
                     found = True
                 if (x == 0 and y == (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 270)
-                    self.grid[(x, y)] = choosenSprite
+                    self.grid[(x, y)] = {}
+                    self.grid[(x, y)]["sprite"] = choosenSprite
+                    self.grid[(x, y)]["collision"] = True
                     found = True
 
                 # drawing of door
                 if (x == 0 and y == (self.screen_dimensions[1] - self.blockSize)/2):
                     choosenSprite = pygame.transform.scale(self.doorSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 90)
-                    self.grid[(x, y)] = choosenSprite
+                    self.grid[(x, y)] = {}
+                    self.grid[(x, y)]["sprite"] = choosenSprite
+                    self.grid[(x, y)]["collision"] = True
                     found = True
 
                 if not found:
                     choosenSprite = pygame.transform.scale(self.floorSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 0)
-                    self.grid[(x, y)] = choosenSprite
+                    self.grid[(x, y)] = {}
+                    self.grid[(x, y)]["sprite"] = choosenSprite
+                    self.grid[(x, y)]["collision"] = False
 
     def generateWalls(self):
         for tile in self.grid:
-            current_tile = self.grid[tile]
+            current_tile = self.grid[tile]["sprite"]
             self.screen.blit(current_tile, (tile[0], tile[1]))
 
 class Player(Level):
@@ -164,8 +184,8 @@ class Player(Level):
 
     def checkObjectCollisions(self, x_off, y_off, x_off_2, y_off_2):
         for tile in self.grid:
-            current_tile = self.grid[tile]
-            if checkCollisions(self.position[0] + x_off_2, self.position[1] + y_off_2, self.currentSprite.get_width() + x_off, self.currentSprite.get_height() + y_off, tile[0], tile[1], current_tile.get_width(), current_tile.get_height()):
+            current_tile = self.grid[tile]["sprite"]
+            if self.grid[tile]["collision"] and checkCollisions(self.position[0] + x_off_2, self.position[1] + y_off_2, self.currentSprite.get_width() + x_off, self.currentSprite.get_height() + y_off, tile[0], tile[1], current_tile.get_width(), current_tile.get_height()):
                 return True
         return False
 

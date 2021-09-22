@@ -238,10 +238,10 @@ def showSettingsScreen():
                 SOUNDS.playSound("./sounds/button_press_settings_sound.wav")
 
         # render back to main screen button
-        back_button_sprite = pygame.image.load("./sprites/buttons/exit.png")
+        back_button_sprite = pygame.image.load("./sprites/buttons/back.png")
         SCREEN.blit(back_button_sprite, ((SCREEN.get_width()/2 - back_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - back_button_sprite.get_height()/2) + 100))
         if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - back_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - back_button_sprite.get_height()/2) + 100, back_button_sprite.get_width(), back_button_sprite.get_height()):
-            back_button_sprite = pygame.image.load("./sprites/buttons/exit_dark.png")
+            back_button_sprite = pygame.image.load("./sprites/buttons/back_dark.png")
             SCREEN.blit(back_button_sprite, ((SCREEN.get_width()/2 - back_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - back_button_sprite.get_height()/2) + 100))
             if mouseClickEvent():
                 SOUNDS.playSound("./sounds/button_press_sound.wav")
@@ -249,10 +249,10 @@ def showSettingsScreen():
                 break
 
         # render apply button
-        apply_button_sprite = pygame.image.load("./sprites/buttons/exit.png")
+        apply_button_sprite = pygame.image.load("./sprites/buttons/apply.png")
         SCREEN.blit(apply_button_sprite, ((SCREEN.get_width()/2 - apply_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - apply_button_sprite.get_height()/2) + 100))
         if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - apply_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - apply_button_sprite.get_height()/2) + 100, apply_button_sprite.get_width(), apply_button_sprite.get_height()):
-            apply_button_sprite = pygame.image.load("./sprites/buttons/exit_dark.png")
+            apply_button_sprite = pygame.image.load("./sprites/buttons/apply_dark.png")
             SCREEN.blit(apply_button_sprite, ((SCREEN.get_width()/2 - apply_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - apply_button_sprite.get_height()/2) + 100))
             if mouseClickEvent():
                 SOUNDS.playSound("./sounds/button_press_sound.wav")
@@ -287,11 +287,11 @@ def gameThread():
         # check events.py to see the executed code
         checkForQuitEvent()
 
-        # check if user press a movement key and move the player
-        player.checkPlayerMovements()
-
         # draw grid
         level.generateWalls()
+
+        # check if user press a movement key and move the player
+        player.checkPlayerMovements()
 
         # update display
         pygame.display.update()
@@ -315,10 +315,10 @@ def main():
     # pygame.display.set_icon("./sprites/test.png")
 
     # show splash screen png
-    # showSplashScreen()
+    showSplashScreen()
 
     # show title screen after splash screen
-    # showTitleScreen()
+    showTitleScreen()
 
     # start the game if the showTitleScreen thread is broken
     gameThread()
