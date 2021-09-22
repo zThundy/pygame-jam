@@ -3,6 +3,7 @@ from pygame.locals import *
 
 from player import Player
 from events import *
+from level import Level
 
 size = width, height = 960, 540
 GAME_NAME = "Er tecnico"
@@ -56,6 +57,7 @@ def showSplashScreen():
 
 def showTitleScreen():
     player = Player()
+    level = Level(SCREEN)
     while True:
         SCREEN.fill((0, 0, 0))
         # check events.py to see the executed code
@@ -65,6 +67,9 @@ def showTitleScreen():
 
         # draw entity on screen
         SCREEN.blit(player.getCurrentSprite(), player.getPosition())
+
+        # draw grid
+        level.generateWalls()
         
         # update display
         pygame.display.update()
