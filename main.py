@@ -19,6 +19,7 @@ FONT = 0
 def showSplashScreen():
     # access to global variables
     global SCREEN
+    global FONT
 
     display_splash_screen = 0
     first_string = ""
@@ -68,6 +69,7 @@ def showSplashScreen():
 def showTitleScreen():
     # access to global variables
     global SCREEN
+    global FONT
 
     titleScreen = True
     SCREEN.fill((0, 0, 0))
@@ -156,10 +158,10 @@ def showTitleScreen():
             count = 400
 
 
-
 def gameThread():
     # access to global variables
     global SCREEN
+    global FONT
 
     player = Player()
     level = Level(SCREEN)
@@ -204,9 +206,6 @@ def main():
     # fill both fake and real screen with black background
     SCREEN.fill((0, 0, 0))
     # pygame.display.set_icon("./sprites/test.png")
-
-    # use font pygame
-    FONT = pygame.font.Font("./fonts/game_over.ttf", 200)
 
     # show splash screen png
     showSplashScreen()

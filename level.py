@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 
 class Level:
     screen_dimensions = width, height = 0, 0
@@ -28,23 +28,24 @@ class Level:
 
         for x in range(0, self.screen_dimensions[0], self.blockSize):
             for y in range(0, self.screen_dimensions[1], self.blockSize):
+                num = random.randint(0, 100)
+                choosenSprite = pygame.transform.scale(self.normalSprite, (self.blockSize, self.blockSize))
+                if num > 80:
+                    choosenSprite = pygame.transform.scale(self.windowSprite, (self.blockSize, self.blockSize))
+
                 # drawing of straight walls
                 if (y == 0 and x != 0) and (x < (self.screen_dimensions[0] - self.blockSize)):
-                    normalSprite = pygame.transform.scale(self.normalSprite, (self.blockSize, self.blockSize))
-                    normalSprite = pygame.transform.rotate(normalSprite, 180)
-                    self.screen.blit(normalSprite, (x, y))
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 180)
+                    self.screen.blit(choosenSprite, (x, y))
                 if (y != 0 and x == 0):
-                    normalSprite = pygame.transform.scale(self.normalSprite, (self.blockSize, self.blockSize))
-                    normalSprite = pygame.transform.rotate(normalSprite, 270)
-                    self.screen.blit(normalSprite, (x, y))
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 270)
+                    self.screen.blit(choosenSprite, (x, y))
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y < (self.screen_dimensions[1] - self.blockSize)):
-                    normalSprite = pygame.transform.scale(self.normalSprite, (self.blockSize, self.blockSize))
-                    normalSprite = pygame.transform.rotate(normalSprite, 90)
-                    self.screen.blit(normalSprite, (x, y))
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 90)
+                    self.screen.blit(choosenSprite, (x, y))
                 if (x < (self.screen_dimensions[0] - self.blockSize) and y == (self.screen_dimensions[1] - self.blockSize)):
-                    normalSprite = pygame.transform.scale(self.normalSprite, (self.blockSize, self.blockSize))
-                    normalSprite = pygame.transform.rotate(normalSprite, 0)
-                    self.screen.blit(normalSprite, (x, y))
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 0)
+                    self.screen.blit(choosenSprite, (x, y))
 
                 # drawing of corners
                 if (x == 0 and y == 0):
