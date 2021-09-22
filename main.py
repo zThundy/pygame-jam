@@ -315,10 +315,10 @@ def main():
     # pygame.display.set_icon("./sprites/test.png")
 
     # show splash screen png
-    showSplashScreen()
+    # showSplashScreen()
 
     # show title screen after splash screen
-    showTitleScreen()
+    # showTitleScreen()
 
     # start the game if the showTitleScreen thread is broken
     gameThread()

@@ -115,6 +115,7 @@ class Player(Level):
     position.xy = 0, 0
     # general player sprite
     rightSprite = pygame.image.load("./sprites/user/personaggio.png")
+    rightSprite = pygame.transform.scale(rightSprite, (64, 110))
     leftSprite = pygame.transform.flip(rightSprite, True, False)
     currentSprite = rightSprite
     # player legs sprites
