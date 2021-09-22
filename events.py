@@ -13,9 +13,16 @@ def checkForQuitEvent():
         pygame.quit()
         sys.exit()
 
+
+old_state = (0, 0, 0)
 def mouseClickEvent():
-    for event in pygame.event.get():
-        # with this we check if the player press the left mouse button
-        if event.type == MOUSEBUTTONDOWN and event.button == 1:
+    global old_state
+
+    if pygame.mouse.get_pressed() == (1, 0, 0):
+        if old_state != pygame.mouse.get_pressed():
+            old_state = pygame.mouse.get_pressed()
             return True
-        return False
+    if old_state == (1, 0, 0) and pygame.mouse.get_pressed() == (0, 0, 0):
+        old_state = pygame.mouse.get_pressed()
+
+    return False
