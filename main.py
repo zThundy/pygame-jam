@@ -169,6 +169,10 @@ def gameThread():
     pygame.mixer.music.load("./sounds/game_theme.mp3")
     pygame.mixer.music.play()
 
+    # this function ready the level generator
+    # and creates a grid of elements with their images inside
+    level.generateGrid()
+
     while True:
         # fill every time the screen with black color to reset
         # every element on the screen
