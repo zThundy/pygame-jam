@@ -8,7 +8,7 @@ class Player:
     screen = 0
 
     position = pygame.Vector2()
-    position.xy = 50, 50
+    position.xy = 0, 0
     velocity = pygame.Vector2()
     velocity.xy = 3, 0
     rightSprite = pygame.image.load("./sprites/user/personaggio.png")
@@ -18,6 +18,7 @@ class Player:
     def __init__(self, SCREEN):
         self.screen_dimensions = (SCREEN.get_width(), SCREEN.get_height())
         self.screen = SCREEN
+        self.position = pygame.Vector2(10, self.screen_dimensions[1]/2 - 60)
 
     def setPosition(self, x, y):
         self.position.xy = x, y
