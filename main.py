@@ -1,7 +1,9 @@
 import sys, pygame, time, math, random
 from pygame.locals import *
 
-size = width, height = 1920, 1080
+from player import Player
+
+size = width, height = 960, 540
 GAME_NAME = "Er tecnico"
 GAME_SUBTITLE = "Un gioco brutto fatto da poppity"
 
@@ -39,17 +41,25 @@ def showSplashScreen():
         # ovverwrite prev font element to have bigger dimension
         FONT = pygame.font.Font("./fonts/game_over.ttf", 250)
         main_title = FONT.render(first_string, True, (50, 255, 50))
-        SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, 300))
+        SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 150)))
         
         FONT = pygame.font.Font("./fonts/game_over.ttf", 150)
         main_subtitle = FONT.render(second_stirng, True, (50, 255, 50))
-        SCREEN.blit(main_subtitle, (SCREEN.get_width()/2 - main_subtitle.get_width()/2, main_title.get_height() + 300))
+        SCREEN.blit(main_subtitle, (SCREEN.get_width()/2 - main_subtitle.get_width()/2, main_title.get_height() + SCREEN.get_height()/2 - (main_subtitle.get_height()/2 + 150)))
 
         # update display
         pygame.display.update()
         # wait for 10 seconds
         pygame.time.delay(10)
 
+        if len(first_string) == len(GAME_NAME) and len(second_stirng) == len(GAME_SUBTITLE):  
+            pygame.time.delay(2500)
+            break
+
+
+def showTitleScreen():
+    player = Player()
+    print(player)
 
 
 def main():
@@ -67,12 +77,12 @@ def main():
 
     # use font pygame
     FONT = pygame.font.Font("./fonts/game_over.ttf", 200)
-    
-    # get player skin
-    player = pygame.image.load("./sprites/pg.png")
 
     # show splash screen png
     showSplashScreen()
+
+    # show title screen after splash screen
+    showTitleScreen()
 
 if __name__ == "__main__":
     main()
