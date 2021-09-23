@@ -7,6 +7,7 @@ from interactions import *
 class Board:
     screen_dimensions = width, height = 0, 0
     screen = None
+    bacheca = False
 
     blockSize = 120
     grid = {}
@@ -16,6 +17,7 @@ class Board:
     doorSprite = pygame.image.load("./sprites/rooms/muro_con_porta.png")
     normalSprite = pygame.image.load("./sprites/rooms/muro_intero.png")
     floorSprite = pygame.image.load("./sprites/rooms/pavimento.png")
+    boardSprite = pygame.image.load("./sprites/rooms/Muro_con_bacheca.png")
 
     def __init__(self, SCREEN):
         self.screen_dimensions = (SCREEN.get_width(), SCREEN.get_height())
@@ -32,36 +34,9 @@ class Board:
                 # this will be used to check if the
                 # tile will be a floor tile or not
                 found = False
-                num = random.randint(0, 100)
                 choosenSprite = pygame.transform.scale(self.normalSprite, (self.blockSize, self.blockSize))
-                if num > 80:
+                if random.randint(0, 100) > 80:
                     choosenSprite = pygame.transform.scale(self.windowSprite, (self.blockSize, self.blockSize))
-                
-                # drawing of straight walls
-                if (y == 0 and x != 0) and (x < (self.screen_dimensions[0] - self.blockSize)):
-                    choosenSprite = pygame.transform.rotate(choosenSprite, 180)
-                    temp_element["sprite"] = choosenSprite
-                    temp_element["collision"] = True
-                    temp_element["coords"] = (x, y)
-                    found = True
-                if (y != 0 and x == 0):
-                    choosenSprite = pygame.transform.rotate(choosenSprite, 270)
-                    temp_element["sprite"] = choosenSprite
-                    temp_element["collision"] = True
-                    temp_element["coords"] = (x, y)
-                    found = True
-                if (x == (self.screen_dimensions[0] - self.blockSize) and y < (self.screen_dimensions[1] - self.blockSize)):
-                    choosenSprite = pygame.transform.rotate(choosenSprite, 90)
-                    temp_element["sprite"] = choosenSprite
-                    temp_element["collision"] = True
-                    temp_element["coords"] = (x, y)
-                    found = True
-                if (x < (self.screen_dimensions[0] - self.blockSize) and y == (self.screen_dimensions[1] - self.blockSize)):
-                    choosenSprite = pygame.transform.rotate(choosenSprite, 0)
-                    temp_element["sprite"] = choosenSprite
-                    temp_element["collision"] = True
-                    temp_element["coords"] = (x, y)
-                    found = True
 
                 # drawing of corners
                 if (x == 0 and y == 0):
@@ -88,6 +63,41 @@ class Board:
                 if (x == 0 and y == (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 90)
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
+                    found = True
+                
+                if not self.bacheca and not found:
+                    self.bacheca = True
+                    choosenSprite = pygame.transform.scale(self.boardSprite, (self.blockSize, self.blockSize))
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
+                    temp_element["interaction"] = boardInteraction
+                    found = True
+
+                # drawing of straight walls
+                if (y == 0 and x != 0) and (x < (self.screen_dimensions[0] - self.blockSize)):
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 180)
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
+                    found = True
+                if (y != 0 and x == 0):
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 270)
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
+                    found = True
+                if (x == (self.screen_dimensions[0] - self.blockSize) and y < (self.screen_dimensions[1] - self.blockSize)):
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 90)
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
+                    found = True
+                if (x < (self.screen_dimensions[0] - self.blockSize) and y == (self.screen_dimensions[1] - self.blockSize)):
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 0)
                     temp_element["sprite"] = choosenSprite
                     temp_element["collision"] = True
                     temp_element["coords"] = (x, y)
@@ -137,7 +147,7 @@ class Level(Board):
     def generateLevel(self):
         if self.level_number == 0:
             # here we add the single objects on the screen
-            self.generateLevelObjects(120, 120, pygame.image.load("./sprites/rooms/room_elements/tavolo.png"), True)
+            self.generateLevelObjects(960, 120, pygame.image.load("./sprites/rooms/room_elements/tavolo.png"), True)
             self.generateLevelObjects(600, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
             self.generateLevelObjects(720, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
             self.generateLevelObjects(840, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
@@ -234,16 +244,16 @@ class Player(Board):
                     return (True, current_tile)
         return (False, False)
 
-    def checkInteraction(self):
+    def checkInteraction(self, mouseX, mouseY, sounds):
         if isInteractionPressed():
             (isColliding, obj) = self.checkObjectCollisions(10, 10, -10, -10)
             if isColliding and "interaction" in obj:
                 self.saved_interaction = obj["interaction"]
 
         if self.saved_interaction:
-            self.saved_interaction(self.screen)
+            self.saved_interaction(self.screen, mouseX, mouseY, sounds)
             keys = pygame.key.get_pressed()
-            if keys[K_BACKSPACE]:
+            if keys[K_BACKSPACE] or keys[K_DELETE]:
                 self.saved_interaction = False
         return self.saved_interaction
 

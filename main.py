@@ -347,9 +347,9 @@ def gameThread():
             FONT = pygame.font.Font("./fonts/game_over.ttf", 100)
             main_title = FONT.render("Time remaining: " + str(remaining_seconds), True, (0, 0, 0))
             SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, 20))
-            
+
             # check if user interact with something
-            interaction = player.checkInteraction()
+            interaction = player.checkInteraction(mouseX, mouseY, SOUNDS)
             if not interaction:
                 # check if user press a movement key and move the player
                 player.checkPlayerMovements()
