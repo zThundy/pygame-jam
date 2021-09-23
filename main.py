@@ -378,7 +378,8 @@ def main():
 
     # fill both fake and real screen with black background
     SCREEN.fill((0, 0, 0))
-    # pygame.display.set_icon("./sprites/test.png")
+    picture = pygame.image.load("./sprites/user/personaggio.png")
+    pygame.display.set_icon(picture)
 
     # show splash screen png
     showSplashScreen()
