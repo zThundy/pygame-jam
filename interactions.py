@@ -1,5 +1,4 @@
 import pygame
-from pygame import mouse
 from pygame.locals import *
 from events import *
 from utils import *
@@ -73,6 +72,7 @@ def boardInteraction(SCREEN, mouseX, mouseY, sounds):
     CLOCK.tick(60)
 
 bin_opened = False
+folder_1_opened = False
 def computerInteractions(SCREEN, mouseX, mouseY, sounds):
     global bin_opened
 
@@ -123,3 +123,4 @@ def computerInteractions(SCREEN, mouseX, mouseY, sounds):
     # limit the number of fps to prevent
     # problems :)
     CLOCK.tick(60)
+

@@ -47,14 +47,10 @@ def showSplashScreen():
                 second_stirng += GAME_SUBTITLE[len(second_stirng)]
                 SOUNDS.playSound("./sounds/keyboard/" + str(random.randint(1, 10)) + ".wav")
 
-        # ovverwrite prev font element to have bigger dimension
-        FONT = pygame.font.Font("./fonts/game_over.ttf", 250)
-        main_title = FONT.render(first_string, True, MAIN_COLOR)
-        SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 150)))
-        
-        FONT = pygame.font.Font("./fonts/game_over.ttf", 150)
-        main_subtitle = FONT.render(second_stirng, True, MAIN_COLOR)
-        SCREEN.blit(main_subtitle, (SCREEN.get_width()/2 - main_subtitle.get_width()/2, main_title.get_height() + SCREEN.get_height()/2 - (main_subtitle.get_height()/2 + 150)))
+        # draw first string
+        drawText(SCREEN, MAIN_COLOR, { "text": first_string, "size": 250, "x_off": 0, "y_off": -200, "jump": False })
+        # draw second string
+        drawText(SCREEN, MAIN_COLOR, { "text": second_stirng, "size": 150, "x_off": 0, "y_off": -50, "jump": False })
 
         # update display
         pygame.display.update()
@@ -66,8 +62,7 @@ def showSplashScreen():
             pygame.time.delay(2500)
             break
 
-
-def showTitleScreen(canClick = False):
+def showTitleScreen():
     # access to global variables
     global SCREEN
     global FONT
@@ -101,10 +96,8 @@ def showTitleScreen(canClick = False):
         checkForQuitEvent()
         
         # draw game title
-        FONT = pygame.font.Font("./fonts/game_over.ttf", 250)
-        main_title = FONT.render(GAME_NAME, True, MAIN_COLOR)
-        SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 200) + math.sin(time.time()*8)*8))
-        
+        drawText(SCREEN, MAIN_COLOR, { "text": GAME_NAME, "size": 250, "x_off": 0, "y_off": -200, "jump": True })
+        # draw main button animation
         drawMainButtons(SCREEN, SOUNDS, button_1_press, button_2_press, button_3_press)
 
         # update display
@@ -112,7 +105,6 @@ def showTitleScreen(canClick = False):
         # limit the number of fps to prevent
         # problems :)
         CLOCK.tick(60)
-
 
 def showSettingsScreen():
     # access to global variables
@@ -129,11 +121,11 @@ def showSettingsScreen():
 
     def cb_button_1():
         global settings_screen
-        showTitleScreen(True)
+        showTitleScreen()
         settings_screen = False
     def cb_button_2():
         global settings_screen
-        showTitleScreen(True)
+        showTitleScreen()
         settings_screen = False
 
     while settings_screen:
@@ -181,7 +173,6 @@ def gameThread():
     # this function ready the level generator
     # and creates a grid of elements with their images inside
     board.generateGrid()
-
     # generate current level
     level.generateLevel()
 
@@ -189,7 +180,6 @@ def gameThread():
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((255, 255, 255))
-
         # check events.py to see the executed code
         checkForQuitEvent()
 
@@ -204,10 +194,8 @@ def gameThread():
             s.fill((0, 0, 0, 200))
             SCREEN.blit(s, (0, 0))
 
-            # draw settings page title
-            FONT = pygame.font.Font("./fonts/game_over.ttf", 250)
-            main_title = FONT.render("Game Over", True, MAIN_COLOR)
-            SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, SCREEN.get_height()/2 - (main_title.get_height()/2 + 200) + math.sin(time.time()*8)*8))
+            # draw game over title
+            drawText(SCREEN, MAIN_COLOR, { "text": "Game Over", "size": 250, "x_off": 0, "y_off": -200, "jump": True })
 
             # render retray gameover button
             retry_button_sprite = pygame.image.load("./sprites/buttons/back.png")
@@ -274,10 +262,9 @@ def main():
 
     # show splash screen png
     showSplashScreen()
-
     # show title screen after splash screen
     showTitleScreen()
-
+    # start the gameplay
     gameThread()
 
 if __name__ == "__main__":
