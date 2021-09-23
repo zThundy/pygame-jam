@@ -35,18 +35,17 @@ def keyPadInteraction(SCREEN, mouseX, mouseY, sounds):
     # pygame.draw.rect(s, (255, 0, 0), (SCREEN.get_width()/2 - image.get_width()/2, SCREEN.get_height()/2 - image.get_height()/2, image.get_width(), image.get_height()), 1)
     for index in coords:
         # pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + coords[index][0], (SCREEN.get_height()/2 - image.get_height()/2) + coords[index][1], 100, 75), 1)
-        if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - image.get_width()/2) + coords[index][0], (SCREEN.get_height()/2 - image.get_height()/2) + coords[index][1], 100, 75):
-            if mouseClickEvent():
-                sounds.playSound("./sounds/tasks/click.wav")
-                if len(number_string) < 15 and index != "ok":
-                    number_string += index
+        if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - image.get_width()/2) + coords[index][0], (SCREEN.get_height()/2 - image.get_height()/2) + coords[index][1], 100, 75):
+            sounds.playSound("./sounds/tasks/click.wav")
+            if len(number_string) < 15 and index != "ok":
+                number_string += index
+            else:
+                if number_string == secret_code:
+                    sounds.playSound("./sounds/tasks/correct_task.wav")
+                    number_string = ""
                 else:
-                    if number_string == secret_code:
-                        sounds.playSound("./sounds/tasks/correct_task.wav")
-                        number_string = ""
-                    else:
-                        sounds.playSound("./sounds/tasks/wrong_task.wav")
-                        number_string = ""
+                    sounds.playSound("./sounds/tasks/wrong_task.wav")
+                    number_string = ""
 
     FONT = pygame.font.Font("./fonts/game_over.ttf", 100)
     main_title = FONT.render(number_string, True, (0, 0, 0))
@@ -104,15 +103,19 @@ def computerInteractions(SCREEN, mouseX, mouseY, sounds):
     image = pygame.transform.scale(image, (70, 70))
     s.blit(image, ((SCREEN.get_width()/2 - pc.get_width()/2) + 350, (SCREEN.get_height()/2 - pc.get_height()/2) + 170))
 
-    if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - pc.get_width()/2) + 80, (SCREEN.get_height()/2 - pc.get_height()/2) + 60, 45, 45):
-        if mouseClickEvent():
-            sounds.playSound("./sounds/tasks/mouse_click.wav")
-            bin_opened = True
+    if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - pc.get_width()/2) + 80, (SCREEN.get_height()/2 - pc.get_height()/2) + 60, 45, 45):
+        sounds.playSound("./sounds/tasks/mouse_click.wav")
+        bin_opened = True
 
     if bin_opened:
         bin = pygame.image.load("./sprites/rooms/room_elements/pc/bin_interfaccia.png")
         bin = pygame.transform.scale(bin, (500, 500))
         s.blit(bin, (SCREEN.get_width()/2 - bin.get_width()/2, SCREEN.get_height()/2 - bin.get_height()/2))
+
+    keys = pygame.key.get_pressed()
+    if keys[K_BACKSPACE] or keys[K_DELETE]:
+        sounds.playSound("./sounds/tasks/mouse_click.wav")
+        bin_opened = False
 
     SCREEN.blit(s, (0, 0))
     # update display

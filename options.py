@@ -25,16 +25,19 @@ class Sounds(Options):
             pygame.mixer.Sound.play(self.currentSound)
             self.currentSound.set_volume(self.volume)
 
-    def playMusic(self, path, loop):
+    def playMusic(self, path, loop, restart = False):
         if Options.getValue(self, "music"):
-            if self.musicPlaying:
+            if restart and self.musicPlaying:
                 self.stopMusic()
-            pygame.mixer.music.load(path)
-            pygame.mixer.music.set_volume(self.volume)
-            if loop:
-                pygame.mixer.music.play(-1)
-            else:
-                pygame.mixer.music.play()
+            if restart or not self.musicPlaying:
+                if loop:
+                    pygame.mixer.music.load(path)
+                    pygame.mixer.music.set_volume(self.volume)
+                    pygame.mixer.music.play(-1)
+                else:
+                    pygame.mixer.music.load(path)
+                    pygame.mixer.music.set_volume(self.volume)
+                    pygame.mixer.music.play()
             self.musicPlaying = True
 
     def stopMusic(self):
