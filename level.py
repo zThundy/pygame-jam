@@ -251,7 +251,6 @@ class Player(Board):
         if isInteractionPressed():
             (isColliding, obj) = self.checkObjectCollisions(10, 10, -10, -10)
             if isColliding and "interaction" in obj:
-                print(obj["coords"])
                 self.saved_interaction = obj["interaction"]
 
         if self.saved_interaction:
