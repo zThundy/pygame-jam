@@ -290,6 +290,9 @@ def gameThread():
 
     # here we add the single objects on the screen
     level.generateLevelObjects(120, 120, pygame.image.load("./sprites/rooms/room_elements/tavolo.png"), True)
+    level.generateLevelObjects(600, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
+    level.generateLevelObjects(720, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
+    level.generateLevelObjects(840, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
 
     while True:
         # fill every time the screen with black color to reset

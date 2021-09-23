@@ -112,7 +112,7 @@ class Level:
     def generateLevelObjects(self, x, y, sprite, collision):
         if self.grid[(x, y)]:
             temp_element = {}
-            temp_element["sprite"] = sprite
+            temp_element["sprite"] = pygame.transform.scale(sprite, (self.blockSize, self.blockSize))
             temp_element["collision"] = collision
             temp_element["coords"] = (x, y)
             self.grid[(x, y)][str(len(self.grid[(x, y)]))] = temp_element
