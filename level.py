@@ -48,7 +48,7 @@ class Board:
                     found = True
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y == 0):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
-                    choosenSprite = pygame.transform.rotate(choosenSprite, 270)
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 180)
                     temp_element["sprite"] = choosenSprite
                     temp_element["collision"] = True
                     temp_element["coords"] = (x, y)
@@ -62,7 +62,7 @@ class Board:
                     found = True
                 if (x == 0 and y == (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
-                    choosenSprite = pygame.transform.rotate(choosenSprite, 90)
+                    choosenSprite = pygame.transform.rotate(choosenSprite, 180)
                     temp_element["sprite"] = choosenSprite
                     temp_element["collision"] = True
                     temp_element["coords"] = (x, y)
@@ -121,19 +121,22 @@ class Board:
                     temp_element["coords"] = (x, y)
                 self.grid[(x, y)][str(len(self.grid[(x, y)]))] = temp_element
 
-    def generateLevelObjects(self, x, y, sprite, collision, interaction = None, resize = True):
-        if self.grid[(x, y)]:
-            temp_element = {}
-            if resize:
-                temp_element["sprite"] = pygame.transform.scale(sprite, (self.blockSize, self.blockSize))
-            else:
-                temp_element["sprite"] = sprite
-            temp_element["collision"] = collision
-            temp_element["coords"] = (x, y)
-            if interaction:
-                temp_element["interaction"] = interaction
-            self.grid[(x, y)][str(len(self.grid[(x, y)]))] = temp_element
+    def generateLevelObjects(self, x, y, sprite, collision = True, interaction = None, resize = True, offset = (0, 0)):
+        if offset[0] > 0 or offset[1] > 0:
+            x += offset[0]
+            y += offset[1]
+            self.grid[(x, y)] = {}
 
+        temp_element = {}
+        if resize:
+            temp_element["sprite"] = pygame.transform.scale(sprite, (self.blockSize, self.blockSize))
+        else:
+            temp_element["sprite"] = sprite
+        temp_element["collision"] = collision
+        temp_element["coords"] = (x, y)
+        if interaction:
+            temp_element["interaction"] = interaction
+        self.grid[(x, y)][str(len(self.grid[(x, y)]))] = temp_element
 
     def generateWalls(self):
         for _, coords in enumerate(self.grid):
@@ -147,11 +150,11 @@ class Level(Board):
     def generateLevel(self):
         if self.level_number == 0:
             # here we add the single objects on the screen
-            self.generateLevelObjects(960, 120, pygame.image.load("./sprites/rooms/room_elements/tavolo.png"), True)
+            self.generateLevelObjects(960, 120, pygame.image.load("./sprites/rooms/room_elements/tavolo.png"), False, None, False, (15, 30))
+            self.generateLevelObjects(960, 120, pygame.image.load("./sprites/rooms/room_elements/computer_spento.png"), True, computerInteractions, False, (25, 10))
             self.generateLevelObjects(600, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
             self.generateLevelObjects(720, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
             self.generateLevelObjects(840, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
-
 
 class Player(Board):
     saved_interaction = False
@@ -248,6 +251,7 @@ class Player(Board):
         if isInteractionPressed():
             (isColliding, obj) = self.checkObjectCollisions(10, 10, -10, -10)
             if isColliding and "interaction" in obj:
+                print(obj["coords"])
                 self.saved_interaction = obj["interaction"]
 
         if self.saved_interaction:

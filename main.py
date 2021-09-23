@@ -6,6 +6,8 @@ from level import Board, Player, Level
 from utils import *
 from options import Options, Sounds
 
+from interactions import *
+
 size = width, height = 1920, 1080
 SETTINGS_TITLE = "Settings"
 GAME_NAME = "Er tecnico"
@@ -379,10 +381,10 @@ def main():
     # pygame.display.set_icon("./sprites/test.png")
 
     # show splash screen png
-    # showSplashScreen()
+    showSplashScreen()
 
     # show title screen after splash screen
-    # showTitleScreen()
+    showTitleScreen()
 
     gameThread()
 
