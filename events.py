@@ -1,5 +1,4 @@
-import pygame, sys
-from pygame import key
+import pygame, sys, threading
 from pygame.locals import *
 
 def checkForQuitEvent():
@@ -31,3 +30,10 @@ def isInteractionPressed():
     if keys[K_SPACE] or keys[K_e]:
         return True
     return False
+
+# threading could be handy later
+# def keyPadInteraction(SCREEN):
+#     global keypad_opened
+#     if not keypad_opened:
+#         t = threading.Thread(target = _keyPadInteraction, args = (SCREEN,))
+#         t.start()

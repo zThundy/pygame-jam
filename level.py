@@ -2,8 +2,9 @@ import pygame, random
 from pygame.locals import *
 from utils import *
 from events import *
+from interactions import *
 
-class Level:
+class Board:
     screen_dimensions = width, height = 0, 0
     screen = None
 
@@ -99,6 +100,7 @@ class Level:
                     temp_element["sprite"] = choosenSprite
                     temp_element["collision"] = True
                     temp_element["coords"] = (x, y)
+                    temp_element["interaction"] = keyPadInteraction
                     found = True
 
                 if not found:
@@ -109,12 +111,17 @@ class Level:
                     temp_element["coords"] = (x, y)
                 self.grid[(x, y)][str(len(self.grid[(x, y)]))] = temp_element
 
-    def generateLevelObjects(self, x, y, sprite, collision):
+    def generateLevelObjects(self, x, y, sprite, collision, interaction = None, resize = True):
         if self.grid[(x, y)]:
             temp_element = {}
-            temp_element["sprite"] = pygame.transform.scale(sprite, (self.blockSize, self.blockSize))
+            if resize:
+                temp_element["sprite"] = pygame.transform.scale(sprite, (self.blockSize, self.blockSize))
+            else:
+                temp_element["sprite"] = sprite
             temp_element["collision"] = collision
             temp_element["coords"] = (x, y)
+            if interaction:
+                temp_element["interaction"] = interaction
             self.grid[(x, y)][str(len(self.grid[(x, y)]))] = temp_element
 
 
@@ -124,7 +131,20 @@ class Level:
                 current_tile = self.grid[coords][str(index)]["sprite"]
                 self.screen.blit(current_tile, (coords[0], coords[1]))
 
-class Player(Level):
+class Level(Board):
+    level_number = 0
+
+    def generateLevel(self):
+        if self.level_number == 0:
+            # here we add the single objects on the screen
+            self.generateLevelObjects(120, 120, pygame.image.load("./sprites/rooms/room_elements/tavolo.png"), True)
+            self.generateLevelObjects(600, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
+            self.generateLevelObjects(720, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
+            self.generateLevelObjects(840, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
+
+
+class Player(Board):
+    saved_interaction = False
     acceleration = 5
 
     screen_dimensions = width, height = 0, 0
@@ -198,10 +218,13 @@ class Player(Level):
             if not self.checkObjectCollisions(0, 10, 0, 0)[0]:
                 self.moving = True
                 self.setPosition(self.getPosition()[0], self.getPosition()[1] + self.acceleration)
-        self.screen.blit(self.currentSprite, self.position)
+        self.drawPlayer()
         if not (keys[K_LEFT] or keys[K_a]) and not (keys[K_RIGHT] or keys[K_d]) and not (keys[K_UP] or keys[K_w]) and not (keys[K_DOWN] or keys[K_s]):
             self.moving = False
         self.movePlayerLegs()
+    
+    def drawPlayer(self):
+        self.screen.blit(self.currentSprite, self.position)
 
     def checkObjectCollisions(self, x_off, y_off, x_off_2, y_off_2):
         for _, coords in enumerate(self.grid):
@@ -213,13 +236,14 @@ class Player(Level):
 
     def checkInteraction(self):
         if isInteractionPressed():
-            print("passato")
             (isColliding, obj) = self.checkObjectCollisions(10, 10, -10, -10)
-            if isColliding:
-                print(obj)
-                print(obj["sprite"])
-                print(obj["collision"])
-                
-            # do stuff and maybe call a nested class to do interactions
-            # and tasks
+            if isColliding and "interaction" in obj:
+                self.saved_interaction = obj["interaction"]
+
+        if self.saved_interaction:
+            self.saved_interaction(self.screen)
+            keys = pygame.key.get_pressed()
+            if keys[K_BACKSPACE]:
+                self.saved_interaction = False
+        return self.saved_interaction
 

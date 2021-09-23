@@ -2,7 +2,7 @@ import sys, pygame, time, math, random
 from pygame.locals import *
 
 from events import *
-from level import Level, Player
+from level import Board, Player, Level
 from utils import *
 from options import Options, Sounds
 
@@ -276,6 +276,7 @@ def gameThread():
     global FONT
 
     player = Player(SCREEN)
+    board = Board(SCREEN)
     level = Level(SCREEN)
 
     game_over = False
@@ -286,13 +287,10 @@ def gameThread():
 
     # this function ready the level generator
     # and creates a grid of elements with their images inside
-    level.generateGrid()
+    board.generateGrid()
 
-    # here we add the single objects on the screen
-    level.generateLevelObjects(120, 120, pygame.image.load("./sprites/rooms/room_elements/tavolo.png"), True)
-    level.generateLevelObjects(600, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
-    level.generateLevelObjects(720, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
-    level.generateLevelObjects(840, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
+    # generate current level
+    level.generateLevel()
 
     while True:
         # fill every time the screen with black color to reset
@@ -306,7 +304,7 @@ def gameThread():
         mouseX, mouseY = pygame.mouse.get_pos()
 
         # draw grid
-        level.generateWalls()
+        board.generateWalls()
         
         if game_over:
             s = pygame.Surface(size, SRCALPHA)
@@ -341,12 +339,6 @@ def gameThread():
                     pygame.quit()
                     sys.exit()
         else:
-            # check if user press a movement key and move the player
-            player.checkPlayerMovements()
-
-            # check if user interact with something
-            player.checkInteraction()
-
             # check timer and draw on screen
             seconds = (pygame.time.get_ticks() - start_ticks)/1000
             remaining_seconds = time.strftime('%M:%S', time.gmtime(math.floor(max_seconds - seconds)))
@@ -355,6 +347,12 @@ def gameThread():
             FONT = pygame.font.Font("./fonts/game_over.ttf", 100)
             main_title = FONT.render("Time remaining: " + str(remaining_seconds), True, (0, 0, 0))
             SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, 20))
+            
+            # check if user interact with something
+            interaction = player.checkInteraction()
+            if not interaction:
+                # check if user press a movement key and move the player
+                player.checkPlayerMovements()
             
             if math.floor(max_seconds - seconds) <= 0:
                 game_over = True
