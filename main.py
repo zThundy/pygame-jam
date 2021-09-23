@@ -288,6 +288,9 @@ def gameThread():
     # and creates a grid of elements with their images inside
     level.generateGrid()
 
+    # here we add the single objects on the screen
+    level.generateLevelObjects(120, 120, pygame.image.load("./sprites/rooms/room_elements/tavolo.png"), True)
+
     while True:
         # fill every time the screen with black color to reset
         # every element on the screen

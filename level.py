@@ -1,7 +1,7 @@
 import pygame, random
 from pygame.locals import *
 from utils import *
-from events import isInteractionPressed
+from events import *
 
 class Level:
     screen_dimensions = width, height = 0, 0
@@ -23,87 +23,106 @@ class Level:
     def generateGrid(self):
         for x in range(0, self.screen_dimensions[0], self.blockSize):
             for y in range(0, self.screen_dimensions[1], self.blockSize):
+                # create the grid element index with the tuple
+                # ready to be filled
+                self.grid[(x, y)] = {}
+                temp_element = {}
+
+                # this will be used to check if the
+                # tile will be a floor tile or not
                 found = False
                 num = random.randint(0, 100)
                 choosenSprite = pygame.transform.scale(self.normalSprite, (self.blockSize, self.blockSize))
                 if num > 80:
                     choosenSprite = pygame.transform.scale(self.windowSprite, (self.blockSize, self.blockSize))
+                
                 # drawing of straight walls
                 if (y == 0 and x != 0) and (x < (self.screen_dimensions[0] - self.blockSize)):
                     choosenSprite = pygame.transform.rotate(choosenSprite, 180)
-                    self.grid[(x, y)] = {}
-                    self.grid[(x, y)]["sprite"] = choosenSprite
-                    self.grid[(x, y)]["collision"] = True
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
                     found = True
                 if (y != 0 and x == 0):
                     choosenSprite = pygame.transform.rotate(choosenSprite, 270)
-                    self.grid[(x, y)] = {}
-                    self.grid[(x, y)]["sprite"] = choosenSprite
-                    self.grid[(x, y)]["collision"] = True
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
                     found = True
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y < (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.rotate(choosenSprite, 90)
-                    self.grid[(x, y)] = {}
-                    self.grid[(x, y)]["sprite"] = choosenSprite
-                    self.grid[(x, y)]["collision"] = True
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
                     found = True
                 if (x < (self.screen_dimensions[0] - self.blockSize) and y == (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.rotate(choosenSprite, 0)
-                    self.grid[(x, y)] = {}
-                    self.grid[(x, y)]["sprite"] = choosenSprite
-                    self.grid[(x, y)]["collision"] = True
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
                     found = True
 
                 # drawing of corners
                 if (x == 0 and y == 0):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 0)
-                    self.grid[(x, y)] = {}
-                    self.grid[(x, y)]["sprite"] = choosenSprite
-                    self.grid[(x, y)]["collision"] = True
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
                     found = True
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y == 0):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 270)
-                    self.grid[(x, y)] = {}
-                    self.grid[(x, y)]["sprite"] = choosenSprite
-                    self.grid[(x, y)]["collision"] = True
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
                     found = True
                 if (x == (self.screen_dimensions[0] - self.blockSize) and y == (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 180)
-                    self.grid[(x, y)] = {}
-                    self.grid[(x, y)]["sprite"] = choosenSprite
-                    self.grid[(x, y)]["collision"] = True
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
                     found = True
                 if (x == 0 and y == (self.screen_dimensions[1] - self.blockSize)):
                     choosenSprite = pygame.transform.scale(self.cornerSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 90)
-                    self.grid[(x, y)] = {}
-                    self.grid[(x, y)]["sprite"] = choosenSprite
-                    self.grid[(x, y)]["collision"] = True
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
                     found = True
 
                 # drawing of door
                 if (x == 0 and y == (self.screen_dimensions[1] - self.blockSize)/2):
                     choosenSprite = pygame.transform.scale(self.doorSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 90)
-                    self.grid[(x, y)] = {}
-                    self.grid[(x, y)]["sprite"] = choosenSprite
-                    self.grid[(x, y)]["collision"] = True
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = True
+                    temp_element["coords"] = (x, y)
                     found = True
 
                 if not found:
                     choosenSprite = pygame.transform.scale(self.floorSprite, (self.blockSize, self.blockSize))
                     choosenSprite = pygame.transform.rotate(choosenSprite, 0)
-                    self.grid[(x, y)] = {}
-                    self.grid[(x, y)]["sprite"] = choosenSprite
-                    self.grid[(x, y)]["collision"] = False
+                    temp_element["sprite"] = choosenSprite
+                    temp_element["collision"] = False
+                    temp_element["coords"] = (x, y)
+                self.grid[(x, y)][str(len(self.grid[(x, y)]))] = temp_element
+
+    def generateLevelObjects(self, x, y, sprite, collision):
+        if self.grid[(x, y)]:
+            temp_element = {}
+            temp_element["sprite"] = sprite
+            temp_element["collision"] = collision
+            temp_element["coords"] = (x, y)
+            self.grid[(x, y)][str(len(self.grid[(x, y)]))] = temp_element
+
 
     def generateWalls(self):
-        for tile in self.grid:
-            current_tile = self.grid[tile]["sprite"]
-            self.screen.blit(current_tile, (tile[0], tile[1]))
+        for _, coords in enumerate(self.grid):
+            for index in self.grid[coords]:
+                current_tile = self.grid[coords][str(index)]["sprite"]
+                self.screen.blit(current_tile, (coords[0], coords[1]))
 
 class Player(Level):
     acceleration = 5
@@ -159,24 +178,24 @@ class Player(Level):
         keys = pygame.key.get_pressed()
         # if left key is pressed down (a) remove value from x coordinates
         if keys[K_LEFT] or keys[K_a]:
-            if not self.checkObjectCollisions(0, 0, -10, 0):
+            if not self.checkObjectCollisions(0, 0, -10, 0)[0]:
                 self.moving = True
                 self.setPosition(self.getPosition()[0] - self.acceleration, self.getPosition()[1])
                 self.currentSprite = self.leftSprite
         # if right key is pressed down (d) add value to x coordinates
         if keys[K_RIGHT] or keys[K_d]:
-            if not self.checkObjectCollisions(10, 0, 0, 0):
+            if not self.checkObjectCollisions(10, 0, 0, 0)[0]:
                 self.moving = True
                 self.setPosition(self.getPosition()[0] + self.acceleration, self.getPosition()[1])
                 self.currentSprite = self.rightSprite
         # if up key is pressed down (w) remove value to y coordinates
         if keys[K_UP] or keys[K_w]:
-            if not self.checkObjectCollisions(0, 0, 0, -10):
+            if not self.checkObjectCollisions(0, 0, 0, -10)[0]:
                 self.moving = True
                 self.setPosition(self.getPosition()[0], self.getPosition()[1] - self.acceleration)
         # if down key is pressed down (s) add value to y coordinates
         if keys[K_DOWN] or keys[K_s]:
-            if not self.checkObjectCollisions(0, 10, 0, 0):
+            if not self.checkObjectCollisions(0, 10, 0, 0)[0]:
                 self.moving = True
                 self.setPosition(self.getPosition()[0], self.getPosition()[1] + self.acceleration)
         self.screen.blit(self.currentSprite, self.position)
@@ -185,20 +204,22 @@ class Player(Level):
         self.movePlayerLegs()
 
     def checkObjectCollisions(self, x_off, y_off, x_off_2, y_off_2):
-        for tile in self.grid:
-            current_tile = self.grid[tile]["sprite"]
-            if self.grid[tile]["collision"] and checkCollisions(self.position[0] + x_off_2, self.position[1] + y_off_2, self.currentSprite.get_width() + x_off, self.currentSprite.get_height() + y_off, tile[0], tile[1], current_tile.get_width(), current_tile.get_height()):
-                return True
-        return False
-
-    def getObjectInCollision(self):
-        # todo: check what's near the player
-        # todo: add metadata to the grid tile
-        print("lol")
+        for _, coords in enumerate(self.grid):
+            for index in self.grid[coords]:
+                current_tile = self.grid[coords][str(index)]
+                if current_tile["collision"] and checkCollisions(self.position[0] + x_off_2, self.position[1] + y_off_2, self.currentSprite.get_width() + x_off, self.currentSprite.get_height() + y_off, current_tile["coords"][0], current_tile["coords"][1], current_tile["sprite"].get_width(), current_tile["sprite"].get_height()):
+                    return (True, current_tile)
+        return (False, False)
 
     def checkInteraction(self):
         if isInteractionPressed():
-            print("lol")
+            print("passato")
+            (isColliding, obj) = self.checkObjectCollisions(10, 10, -10, -10)
+            if isColliding:
+                print(obj)
+                print(obj["sprite"])
+                print(obj["collision"])
+                
             # do stuff and maybe call a nested class to do interactions
             # and tasks
 
