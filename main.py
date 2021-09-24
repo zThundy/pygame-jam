@@ -7,14 +7,15 @@ from utils import *
 from options import Options, Sounds
 
 from title_screen import *
-
 from interactions import *
 
 GAME_NAME = "Er tecnico"
 GAME_TITLE = "Python Gamejam"
 GAME_SUBTITLE = "Un gioco brutto fatto da zThundy__"
 
+# utils variables
 MAIN_COLOR = (50, 255, 50)
+GAME_STATE = "NULL"
 
 # constant variable
 SCREEN = 0
@@ -54,8 +55,7 @@ def showSplashScreen():
         pygame.display.update()
         # limit the number of fps to prevent
         # problems :)
-        if not OPTIONS.getValue("vsync"):
-            CLOCK.tick(60)
+        CLOCK.tick(60)
 
         if len(first_string) == len(GAME_TITLE) and len(second_stirng) == len(GAME_SUBTITLE):  
             time.sleep(2)
@@ -103,8 +103,7 @@ def showTitleScreen():
         pygame.display.update()
         # limit the number of fps to prevent
         # problems :)
-        if not OPTIONS.getValue("vsync"):
-            CLOCK.tick(60)
+        CLOCK.tick(60)
 
 def showSettingsScreen():
     # access to global variables
@@ -116,6 +115,9 @@ def showSettingsScreen():
 
     def cb_01():
         pygame.display.toggle_fullscreen()
+    def cb_02():
+        # pygame.display.toggle_vsync()
+        print("soon ;)")
     def cb_03():
         SOUNDS.stopMusic()
 
@@ -141,7 +143,7 @@ def showSettingsScreen():
         # fullscreen button
         drawSettingsButtonAndText(SCREEN, MAIN_COLOR, OPTIONS, SOUNDS, { "text": "Fullscreen", "value": "fullscreen", "image_off_x": -50, "image_off_y": 200, "rect_off_x": -100, "rect_off_y": 180, "cb": cb_01 })
         # vsync button
-        drawSettingsButtonAndText(SCREEN, MAIN_COLOR, OPTIONS, SOUNDS, { "text": "VSync", "value": "vsync", "image_off_x": -50, "image_off_y": 150, "rect_off_x": -100, "rect_off_y": 130 })
+        drawSettingsButtonAndText(SCREEN, MAIN_COLOR, OPTIONS, SOUNDS, { "text": "VSync", "value": "vsync", "image_off_x": -50, "image_off_y": 150, "rect_off_x": -100, "rect_off_y": 130, "cb": cb_02 })
         # music button
         drawSettingsButtonAndText(SCREEN, MAIN_COLOR, OPTIONS, SOUNDS, { "text": "Music", "value": "music", "image_off_x": -50, "image_off_y": 100, "rect_off_x": -100, "rect_off_y": 80, "cb": cb_03 })
         # sounds button
@@ -155,11 +157,12 @@ def showSettingsScreen():
         pygame.display.update()
         # limit the number of fps to prevent
         # problems :)
-        if not OPTIONS.getValue("vsync"):
-            CLOCK.tick(60)
+        CLOCK.tick(60)
 
 def gameThread():
     # access to global variables
+    global GAME_STATE
+    GAME_STATE = "NULL"
     global SCREEN
     global FONT
 
@@ -167,7 +170,6 @@ def gameThread():
     board = Board(SCREEN)
     level = Level(SCREEN)
 
-    game_over = False
     start_ticks = pygame.time.get_ticks()
     max_seconds = 240
 
@@ -180,32 +182,49 @@ def gameThread():
     level.generateLevel()
 
     def cb_button_1():
+        SOUNDS.stopMusic()
         showTitleScreen()
     def cb_button_2():
+        SOUNDS.stopMusic()
+        pygame.time.delay(500)
         pygame.quit()
         sys.exit()
+    def cb_button_3():
+        global GAME_STATE
+        if GAME_STATE == "PAUSE":
+            GAME_STATE = "NULL"
+    def exit_cb():
+        global GAME_STATE
+        if GAME_STATE == "NULL":
+            GAME_STATE = "PAUSE"
 
     while True:
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((255, 255, 255))
         # check events.py to see the executed code
-        checkForQuitEvent()
+        checkForQuitEvent({ "in_game": True, "cb": exit_cb })
         # get mouse position to check if player is clicking on button
         mouseX, mouseY = pygame.mouse.get_pos()
         # draw grid
         board.generateWalls()
         
-        if game_over:
+        if GAME_STATE != "NULL":
             s = pygame.Surface((SCREEN.get_width(), SCREEN.get_height()), SRCALPHA)
             s.fill((0, 0, 0, 200))
             SCREEN.blit(s, (0, 0))
-            # draw game over title
-            drawText(SCREEN, MAIN_COLOR, { "text": "Game Over", "size": 250, "x_off": 0, "y_off": -200, "jump": True })
-            # render retray gameover button
-            drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "back", "cb": cb_button_1 })
+            if GAME_STATE == "GAME_OVER":
+                # draw game over title
+                drawText(SCREEN, MAIN_COLOR, { "text": "Game Over", "size": 250, "x_off": 0, "y_off": -200, "jump": True })
+                # render retray gameover button
+                drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "back", "cb": cb_button_1 })
+            elif GAME_STATE == "PAUSE":
+                # draw pause title
+                drawText(SCREEN, MAIN_COLOR, { "text": "Pause", "size": 250, "x_off": 0, "y_off": -200, "jump": True })
+                # render retray gameover button
+                drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "resume", "cb": cb_button_3 })
             # render apply button
-            drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "back", "cb": cb_button_2 })
+            drawButton(SCREEN, SOUNDS, { "image_off_x": 300, "image_off_y": 100, "name": "exit", "cb": cb_button_2 })
         else:
             # check timer and draw on screen
             seconds = (pygame.time.get_ticks() - start_ticks)/1000
@@ -222,18 +241,15 @@ def gameThread():
                 player.checkPlayerMovements()
             
             if math.floor(max_seconds - seconds) <= 0:
-                game_over = True
+                GAME_STATE = "GAME_OVER"
 
         # update display
         pygame.display.update()
         # limit the number of fps to prevent
         # problems :)
-        if not OPTIONS.getValue("vsync"):
-            CLOCK.tick(60)
+        CLOCK.tick(60)
 
 def main():
-    os.environ['PYGAME_VSYNC'] = "1"
-
     pygame.init()
     global SCREEN
     # get display info
@@ -241,13 +257,9 @@ def main():
     # define screen dimensions and flags
     _screen = pygame.display.set_mode((0, 0), FULLSCREEN | DOUBLEBUF)
     OPTIONS.setValue("fullscreen", True)
-    OPTIONS.setValue("vsync", True)
     pygame.display.set_caption(GAME_NAME)
-    SCREEN = pygame.Surface((1920, 1080))
-    pygame.transform.scale(_screen, (1920, 1080))
-    print(SCREEN)
+    _screen.fill((0, 0, 0))
     SCREEN = _screen
-    SCREEN.fill((0, 0, 0))
 
     picture = pygame.image.load("./sprites/personaggio.ico")
     pygame.display.set_icon(picture)
@@ -255,9 +267,9 @@ def main():
     # this is used only on startup
     # -------------------------- #
     # show splash screen png
-    showSplashScreen()
+    # showSplashScreen()
     # show title screen after splash screen
-    showTitleScreen()
+    # showTitleScreen()
     # start the gameplay
     gameThread()
 

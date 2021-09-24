@@ -152,13 +152,13 @@ class Level(Board):
             # here we add the single objects on the screen
             self.generateLevelObjects(960, 120, pygame.image.load("./sprites/rooms/room_elements/tavolo.png"), False, None, False, (15, 30))
             self.generateLevelObjects(960, 120, pygame.image.load("./sprites/rooms/room_elements/computer_spento.png"), True, computerInteractions, False, (25, 10))
-            self.generateLevelObjects(600, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
-            self.generateLevelObjects(720, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
-            self.generateLevelObjects(840, 120, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
+            self.generateLevelObjects(600, 600, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
+            self.generateLevelObjects(720, 600, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
+            self.generateLevelObjects(840, 600, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
 
 class Player(Board):
     saved_interaction = False
-    acceleration = 1
+    acceleration = 5
 
     screen_dimensions = width, height = 0, 0
     screen = 0

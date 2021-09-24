@@ -73,8 +73,12 @@ def boardInteraction(SCREEN, mouseX, mouseY, sounds):
 
 bin_opened = False
 folder_1_opened = False
+web_opened = False
 def computerInteractions(SCREEN, mouseX, mouseY, sounds):
     global bin_opened
+    global folder_1_opened
+    global web_opened
+    bin = False
 
     s = pygame.Surface((SCREEN.get_width(), SCREEN.get_height()), SRCALPHA)
     s.fill((0, 0, 0, 200))
@@ -101,21 +105,56 @@ def computerInteractions(SCREEN, mouseX, mouseY, sounds):
     
     image = pygame.image.load("./sprites/rooms/room_elements/pc/logo_internet.png")
     image = pygame.transform.scale(image, (70, 70))
-    s.blit(image, ((SCREEN.get_width()/2 - pc.get_width()/2) + 350, (SCREEN.get_height()/2 - pc.get_height()/2) + 170))
+    s.blit(image, ((SCREEN.get_width()/2 - pc.get_width()/2) + 450, (SCREEN.get_height()/2 - pc.get_height()/2) + 170))
+
+    if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - pc.get_width()/2) + 140, (SCREEN.get_height()/2 - pc.get_height()/2) + 250, 45, 45):
+        sounds.playSound("./sounds/tasks/mouse_click.wav")
+        folder_1_opened = True
+        bin_opened = False
+        web_opened = False
+    
+    if folder_1_opened:
+        bin = pygame.image.load("./sprites/rooms/room_elements/pc/folder_interfaccia.png")
+        bin = pygame.transform.scale(bin, (500, 500))
+        s.blit(bin, (SCREEN.get_width()/2 - bin.get_width()/2, SCREEN.get_height()/2 - bin.get_height()/2))
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - bin.get_width()/2) + 15, (SCREEN.get_height()/2 - bin.get_height()/2) + 15, 10, 10))
 
     if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - pc.get_width()/2) + 80, (SCREEN.get_height()/2 - pc.get_height()/2) + 60, 45, 45):
         sounds.playSound("./sounds/tasks/mouse_click.wav")
         bin_opened = True
-
+        folder_1_opened = False
+        web_opened = False
+    
     if bin_opened:
         bin = pygame.image.load("./sprites/rooms/room_elements/pc/bin_interfaccia.png")
         bin = pygame.transform.scale(bin, (500, 500))
         s.blit(bin, (SCREEN.get_width()/2 - bin.get_width()/2, SCREEN.get_height()/2 - bin.get_height()/2))
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - bin.get_width()/2) + 15, (SCREEN.get_height()/2 - bin.get_height()/2) + 15, 10, 10))
+
+    if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - pc.get_width()/2) + 450, (SCREEN.get_height()/2 - pc.get_height()/2) + 170, 45, 45):
+        sounds.playSound("./sounds/tasks/mouse_click.wav")
+        bin_opened = False
+        folder_1_opened = False
+        web_opened = True
+    
+    if web_opened:
+        bin = pygame.image.load("./sprites/rooms/room_elements/pc/web_interfaccia.png")
+        bin = pygame.transform.scale(bin, (500, 500))
+        s.blit(bin, (SCREEN.get_width()/2 - bin.get_width()/2, SCREEN.get_height()/2 - bin.get_height()/2))
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - bin.get_width()/2) + 15, (SCREEN.get_height()/2 - bin.get_height()/2) + 15, 10, 10))
 
     keys = pygame.key.get_pressed()
     if keys[K_BACKSPACE] or keys[K_DELETE]:
         sounds.playSound("./sounds/tasks/mouse_click.wav")
         bin_opened = False
+        folder_1_opened = False
+        web_opened = False
+
+    if bin and checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - bin.get_width()/2) + 15, (SCREEN.get_height()/2 - bin.get_height()/2) + 15, 10, 10):
+        sounds.playSound("./sounds/tasks/mouse_click.wav")
+        bin_opened = False
+        folder_1_opened = False
+        web_opened = False
 
     SCREEN.blit(s, (0, 0))
     # update display
@@ -123,4 +162,3 @@ def computerInteractions(SCREEN, mouseX, mouseY, sounds):
     # limit the number of fps to prevent
     # problems :)
     CLOCK.tick(60)
-
