@@ -7,11 +7,9 @@ from utils import *
 from options import Options, Sounds
 
 from title_screen import *
-from settings_screen import *
 
 from interactions import *
 
-size = width, height = 1920, 1080
 GAME_NAME = "Er tecnico"
 GAME_TITLE = "Python Gamejam"
 GAME_SUBTITLE = "Un gioco brutto fatto da zThundy__"
@@ -59,7 +57,7 @@ def showSplashScreen():
         CLOCK.tick(60)
 
         if len(first_string) == len(GAME_TITLE) and len(second_stirng) == len(GAME_SUBTITLE):  
-            pygame.time.delay(2500)
+            time.sleep(2)
             break
 
 def showTitleScreen():
@@ -84,6 +82,7 @@ def showTitleScreen():
     def button_3_press():
         global titleScreen
         titleScreen = False
+        pygame.time.delay(500)
         pygame.quit()
         sys.exit()
 
@@ -91,7 +90,6 @@ def showTitleScreen():
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
-
         # check events.py to see the executed code
         checkForQuitEvent()
         
@@ -132,9 +130,11 @@ def showSettingsScreen():
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
-
         # check events.py to see the executed code
         checkForQuitEvent()
+
+        # draw settings title
+        drawText(SCREEN, MAIN_COLOR, { "text": "Settings", "size": 250, "x_off": 0, "y_off": -350, "jump": True })
 
         # fullscreen button
         drawSettingsButtonAndText(SCREEN, MAIN_COLOR, OPTIONS, SOUNDS, { "text": "Fullscreen", "value": "fullscreen", "image_off_x": -50, "image_off_y": 200, "rect_off_x": -100, "rect_off_y": 180, "cb": cb_01 })
@@ -176,58 +176,41 @@ def gameThread():
     # generate current level
     level.generateLevel()
 
+    def cb_button_1():
+        showTitleScreen()
+    def cb_button_2():
+        pygame.quit()
+        sys.exit()
+
     while True:
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((255, 255, 255))
         # check events.py to see the executed code
         checkForQuitEvent()
-
         # get mouse position to check if player is clicking on button
         mouseX, mouseY = pygame.mouse.get_pos()
-
         # draw grid
         board.generateWalls()
         
         if game_over:
-            s = pygame.Surface(size, SRCALPHA)
+            s = pygame.Surface((SCREEN.get_width(), SCREEN.get_height()), SRCALPHA)
             s.fill((0, 0, 0, 200))
             SCREEN.blit(s, (0, 0))
-
             # draw game over title
             drawText(SCREEN, MAIN_COLOR, { "text": "Game Over", "size": 250, "x_off": 0, "y_off": -200, "jump": True })
-
             # render retray gameover button
-            retry_button_sprite = pygame.image.load("./sprites/buttons/back.png")
-            SCREEN.blit(retry_button_sprite, ((SCREEN.get_width()/2 - retry_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - retry_button_sprite.get_height()/2) + 100))
-            if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - retry_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - retry_button_sprite.get_height()/2) + 100, retry_button_sprite.get_width(), retry_button_sprite.get_height()):
-                retry_button_sprite = pygame.image.load("./sprites/buttons/back_dark.png")
-                SCREEN.blit(retry_button_sprite, ((SCREEN.get_width()/2 - retry_button_sprite.get_width()/2) - 300, (SCREEN.get_height()/2 - retry_button_sprite.get_height()/2) + 100))
-                if mouseClickEvent():
-                    SOUNDS.playSound("./sounds/button_press_sound.wav")
-                    showTitleScreen()
-                    break
-
+            drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "back", "cb": cb_button_1 })
             # render apply button
-            exit_button_sprite = pygame.image.load("./sprites/buttons/exit.png")
-            SCREEN.blit(exit_button_sprite, ((SCREEN.get_width()/2 - exit_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - exit_button_sprite.get_height()/2) + 100))
-            if checkCollisions(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - exit_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - exit_button_sprite.get_height()/2) + 100, exit_button_sprite.get_width(), exit_button_sprite.get_height()):
-                exit_button_sprite = pygame.image.load("./sprites/buttons/exit_dark.png")
-                SCREEN.blit(exit_button_sprite, ((SCREEN.get_width()/2 - exit_button_sprite.get_width()/2) + 300, (SCREEN.get_height()/2 - exit_button_sprite.get_height()/2) + 100))
-                if mouseClickEvent():
-                    SOUNDS.playSound("./sounds/button_press_sound.wav")
-                    pygame.time.delay(1000)
-                    pygame.quit()
-                    sys.exit()
+            drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "back", "cb": cb_button_2 })
         else:
             # check timer and draw on screen
             seconds = (pygame.time.get_ticks() - start_ticks)/1000
             remaining_seconds = time.strftime('%M:%S', time.gmtime(math.floor(max_seconds - seconds)))
 
             pygame.draw.rect(SCREEN, (230, 230, 230), (SCREEN.get_width()/2 - 200, 20, 400, 70), 0, 20)
-            FONT = pygame.font.Font("./fonts/game_over.ttf", 100)
-            main_title = FONT.render("Time remaining: " + str(remaining_seconds), True, (0, 0, 0))
-            SCREEN.blit(main_title, (SCREEN.get_width()/2 - main_title.get_width()/2, 20))
+            # draw time remaining text
+            drawText(SCREEN, (0, 0, 0), { "text": "Time remaining: " + str(remaining_seconds), "size": 100, "x_off": 0, "y_off": -490, "jump": False })
 
             # check if user interact with something
             interaction = player.checkInteraction(mouseX, mouseY, SOUNDS)
@@ -244,24 +227,28 @@ def gameThread():
         # problems :)
         CLOCK.tick(60)
 
-
 def main():
     pygame.init()
-
-    # access to global variables
     global SCREEN
+    # get display info
+    infoObject = pygame.display.Info()
 
     # define screen dimensions and flags
-    SCREEN = pygame.display.set_mode(size)
+    _screen = pygame.display.set_mode((0, 0))
     pygame.display.set_caption(GAME_NAME)
-
-    # fill both fake and real screen with black background
+    SCREEN = pygame.Surface((1920, 1080))
+    pygame.transform.scale(_screen, (infoObject.current_w, infoObject.current_h))
+    print(SCREEN)
+    SCREEN = _screen
     SCREEN.fill((0, 0, 0))
+
     picture = pygame.image.load("./sprites/personaggio.ico")
     pygame.display.set_icon(picture)
 
+    # this is used only on startup
+    # -------------------------- #
     # show splash screen png
-    showSplashScreen()
+    # showSplashScreen()
     # show title screen after splash screen
     showTitleScreen()
     # start the gameplay
