@@ -1,4 +1,4 @@
-import sys, pygame, time, math, random
+import sys, pygame, time, math, random, os
 from pygame.locals import *
 
 from events import *
@@ -54,7 +54,8 @@ def showSplashScreen():
         pygame.display.update()
         # limit the number of fps to prevent
         # problems :)
-        CLOCK.tick(60)
+        if not OPTIONS.getValue("vsync"):
+            CLOCK.tick(60)
 
         if len(first_string) == len(GAME_TITLE) and len(second_stirng) == len(GAME_SUBTITLE):  
             time.sleep(2)
@@ -102,7 +103,8 @@ def showTitleScreen():
         pygame.display.update()
         # limit the number of fps to prevent
         # problems :)
-        CLOCK.tick(60)
+        if not OPTIONS.getValue("vsync"):
+            CLOCK.tick(60)
 
 def showSettingsScreen():
     # access to global variables
@@ -153,7 +155,8 @@ def showSettingsScreen():
         pygame.display.update()
         # limit the number of fps to prevent
         # problems :)
-        CLOCK.tick(60)
+        if not OPTIONS.getValue("vsync"):
+            CLOCK.tick(60)
 
 def gameThread():
     # access to global variables
@@ -225,19 +228,23 @@ def gameThread():
         pygame.display.update()
         # limit the number of fps to prevent
         # problems :)
-        CLOCK.tick(60)
+        if not OPTIONS.getValue("vsync"):
+            CLOCK.tick(60)
 
 def main():
+    os.environ['PYGAME_VSYNC'] = "1"
+
     pygame.init()
     global SCREEN
     # get display info
-    infoObject = pygame.display.Info()
 
     # define screen dimensions and flags
-    _screen = pygame.display.set_mode((0, 0))
+    _screen = pygame.display.set_mode((0, 0), FULLSCREEN | DOUBLEBUF)
+    OPTIONS.setValue("fullscreen", True)
+    OPTIONS.setValue("vsync", True)
     pygame.display.set_caption(GAME_NAME)
     SCREEN = pygame.Surface((1920, 1080))
-    pygame.transform.scale(_screen, (infoObject.current_w, infoObject.current_h))
+    pygame.transform.scale(_screen, (1920, 1080))
     print(SCREEN)
     SCREEN = _screen
     SCREEN.fill((0, 0, 0))
@@ -248,7 +255,7 @@ def main():
     # this is used only on startup
     # -------------------------- #
     # show splash screen png
-    # showSplashScreen()
+    showSplashScreen()
     # show title screen after splash screen
     showTitleScreen()
     # start the gameplay

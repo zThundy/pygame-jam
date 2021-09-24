@@ -158,7 +158,7 @@ class Level(Board):
 
 class Player(Board):
     saved_interaction = False
-    acceleration = 5
+    acceleration = 1
 
     screen_dimensions = width, height = 0, 0
     screen = 0
