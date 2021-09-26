@@ -296,9 +296,9 @@ def main():
     # this is used only on startup
     # -------------------------- #
     # show splash screen png
-    # showSplashScreen()
+    showSplashScreen()
     # show title screen after splash screen
-    # showTitleScreen()
+    showTitleScreen()
     # start the gameplay
     gameThread()
 
