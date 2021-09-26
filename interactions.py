@@ -22,7 +22,7 @@ coords = {
 
 number_string = ""
 secret_code = "7355608"
-def keyPadInteraction(SCREEN, mouseX, mouseY, sounds):
+def keyPadInteraction(SCREEN, mouseX, mouseY, sounds, cb = False):
     global number_string
 
     s = pygame.Surface((SCREEN.get_width(), SCREEN.get_height()), SRCALPHA)
@@ -42,6 +42,8 @@ def keyPadInteraction(SCREEN, mouseX, mouseY, sounds):
                 if number_string == secret_code:
                     sounds.playSound("./sounds/tasks/correct_task.wav")
                     number_string = ""
+                    if cb:
+                        cb("keypad")
                 else:
                     sounds.playSound("./sounds/tasks/wrong_task.wav")
                     number_string = ""
@@ -57,7 +59,7 @@ def keyPadInteraction(SCREEN, mouseX, mouseY, sounds):
     # problems :)
     CLOCK.tick(60)
 
-def boardInteraction(SCREEN, mouseX, mouseY, sounds):
+def boardInteraction(SCREEN, mouseX, mouseY, sounds, cb = False):
     s = pygame.Surface((SCREEN.get_width(), SCREEN.get_height()), SRCALPHA)
     image = pygame.image.load("./sprites/rooms/room_elements/post_it.png")
     image = pygame.transform.scale(image, (256, 256))
@@ -74,7 +76,7 @@ def boardInteraction(SCREEN, mouseX, mouseY, sounds):
 bin_opened = False
 folder_1_opened = False
 web_opened = False
-def computerInteractions(SCREEN, mouseX, mouseY, sounds):
+def computerInteractions(SCREEN, mouseX, mouseY, sounds, cb = False):
     global bin_opened
     global folder_1_opened
     global web_opened
@@ -142,13 +144,6 @@ def computerInteractions(SCREEN, mouseX, mouseY, sounds):
         bin = pygame.transform.scale(bin, (500, 500))
         s.blit(bin, (SCREEN.get_width()/2 - bin.get_width()/2, SCREEN.get_height()/2 - bin.get_height()/2))
         pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - bin.get_width()/2) + 15, (SCREEN.get_height()/2 - bin.get_height()/2) + 15, 10, 10))
-
-    keys = pygame.key.get_pressed()
-    if keys[K_BACKSPACE] or keys[K_DELETE]:
-        sounds.playSound("./sounds/tasks/mouse_click.wav")
-        bin_opened = False
-        folder_1_opened = False
-        web_opened = False
 
     if bin and checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - bin.get_width()/2) + 15, (SCREEN.get_height()/2 - bin.get_height()/2) + 15, 10, 10):
         sounds.playSound("./sounds/tasks/mouse_click.wav")

@@ -247,14 +247,13 @@ class Player(Board):
                     return (True, current_tile)
         return (False, False)
 
-    def checkInteraction(self, mouseX, mouseY, sounds):
+    def checkInteraction(self):
         if isInteractionPressed():
             (isColliding, obj) = self.checkObjectCollisions(10, 10, -10, -10)
             if isColliding and "interaction" in obj:
                 self.saved_interaction = obj["interaction"]
 
         if self.saved_interaction:
-            self.saved_interaction(self.screen, mouseX, mouseY, sounds)
             keys = pygame.key.get_pressed()
             if keys[K_BACKSPACE] or keys[K_DELETE]:
                 self.saved_interaction = False

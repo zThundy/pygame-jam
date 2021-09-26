@@ -1,27 +1,35 @@
 import pygame, sys
 from pygame.locals import *
 
-def checkForQuitEvent(settings = False):
-    if not settings:
-        settings = { "cb": False, "in_game": False }
+input_key = 0
+last_input = 0
+def checkLastInput(input_type):
+    global input_key
+    global last_input
     keys = pygame.key.get_pressed()
+
+    if input_type == input_key and last_input != keys[input_type] and last_input == 1:
+        last_input = 0
+        return True
+    input_key = input_type
+    if keys[input_type]:
+        last_input = keys[input_type]
+    return False
+
+def checkForQuitEvent(cb = False):
+    # questo controllo dell'evento serve a terminare il
+    # programma se l'utente preme la X di windows
     for event in pygame.event.get():
-        # questo controllo dell'evento serve a terminare il
-        # programma se l'utente preme la X di windows
         if event.type == QUIT:
-            if not settings["in_game"]:
-                pygame.quit()
-                sys.exit()
-            else:
-                if settings["cb"]:
-                    settings["cb"]()
-    if keys[K_ESCAPE]:
-        if not settings["in_game"]:
+            pygame.quit()
+            sys.exit()
+
+    if checkLastInput(K_ESCAPE):
+        if not cb:
             pygame.quit()
             sys.exit()
         else:
-            if settings["cb"]:
-                settings["cb"]()
+            cb()
 
 old_state = (0, 0, 0)
 def mouseClickEvent():
