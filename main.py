@@ -31,12 +31,16 @@ def showSplashScreen():
 
     first_string = ""
     second_stirng = ""
+    splash_screen = True
+    check = 0
 
     # 4 secondi di attesa
-    while True:
+    while splash_screen:
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
+        # check events.py to see the executed code
+        checkForQuitEvent()
 
         if random.randint(0, 100) > 85:
             if len(first_string) != len(GAME_TITLE):
@@ -51,15 +55,18 @@ def showSplashScreen():
         # draw second string
         drawText(SCREEN, MAIN_COLOR, { "text": second_stirng, "size": 150, "x_off": 0, "y_off": -50, "jump": False })
 
+        # check leg of both first and second string, if they're completed
+        # then break the loop
+        if len(first_string) == len(GAME_TITLE) and len(second_stirng) == len(GAME_SUBTITLE):
+            check += 1
+            if check > 200:
+                splash_screen = False
+
         # update display
         pygame.display.update()
         # limit the number of fps to prevent
         # problems :)
         CLOCK.tick(60)
-
-        if len(first_string) == len(GAME_TITLE) and len(second_stirng) == len(GAME_SUBTITLE):  
-            time.sleep(2)
-            break
 
 def showTitleScreen():
     # access to global variables
@@ -67,27 +74,27 @@ def showTitleScreen():
     global FONT
 
     SCREEN.fill((0, 0, 0))
-    titleScreen = True
+    title_screen = True
 
     SOUNDS.playMusic("./sounds/main_theme.mp3", True, False)
 
     def button_1_press():
-        global titleScreen
-        titleScreen = False
+        global title_screen
+        title_screen = False
         showSettingsScreen()
     def button_2_press():
-        global titleScreen
-        titleScreen = False
+        global title_screen
+        title_screen = False
         SOUNDS.stopMusic()
         gameThread()
     def button_3_press():
-        global titleScreen
-        titleScreen = False
+        global title_screen
+        title_screen = False
         pygame.time.delay(500)
         pygame.quit()
         sys.exit()
 
-    while titleScreen:
+    while title_screen:
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
@@ -121,11 +128,11 @@ def showSettingsScreen():
     def cb_03():
         SOUNDS.stopMusic()
 
-    def cb_button_1():
+    def buttons_cb():
         global settings_screen
         showTitleScreen()
         settings_screen = False
-    def cb_button_2():
+    def esc_cb():
         global settings_screen
         showTitleScreen()
         settings_screen = False
@@ -135,7 +142,7 @@ def showSettingsScreen():
         # every element on the screen
         SCREEN.fill((0, 0, 0))
         # check events.py to see the executed code
-        checkForQuitEvent()
+        checkForQuitEvent(esc_cb)
 
         # draw settings title
         drawText(SCREEN, MAIN_COLOR, { "text": "Settings", "size": 250, "x_off": 0, "y_off": -350, "jump": True })
@@ -149,9 +156,9 @@ def showSettingsScreen():
         # sounds button
         drawSettingsButtonAndText(SCREEN, MAIN_COLOR, OPTIONS, SOUNDS, { "text": "Sounds", "value": "sound", "image_off_x": -50, "image_off_y": 50, "rect_off_x": -100, "rect_off_y": 30 })
         # render back to main screen button
-        drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "back", "cb": cb_button_1 })
+        drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "back", "cb": buttons_cb })
         # render apply button
-        drawButton(SCREEN, SOUNDS, { "image_off_x": 300, "image_off_y": 100, "name": "apply", "cb": cb_button_2 })
+        drawButton(SCREEN, SOUNDS, { "image_off_x": 300, "image_off_y": 100, "name": "apply", "cb": buttons_cb })
 
         # update display
         pygame.display.update()
@@ -197,13 +204,21 @@ def gameThread():
         global GAME_STATE
         if GAME_STATE == "NULL":
             GAME_STATE = "PAUSE"
+    def win_cb(name):
+        SOUNDS.stopMusic()
+        SOUNDS.playMusic("./sounds/win_theme.wav", True, True)
+        if name != "keypad":
+            return
+        global GAME_STATE
+        if GAME_STATE == "NULL":
+            GAME_STATE = "WIN"
 
     while True:
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((255, 255, 255))
         # check events.py to see the executed code
-        checkForQuitEvent({ "in_game": True, "cb": exit_cb })
+        checkForQuitEvent(exit_cb)
         # get mouse position to check if player is clicking on button
         mouseX, mouseY = pygame.mouse.get_pos()
         # draw grid
@@ -221,8 +236,13 @@ def gameThread():
             elif GAME_STATE == "PAUSE":
                 # draw pause title
                 drawText(SCREEN, MAIN_COLOR, { "text": "Pause", "size": 250, "x_off": 0, "y_off": -200, "jump": True })
-                # render retray gameover button
+                # render resume button
                 drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "resume", "cb": cb_button_3 })
+            elif GAME_STATE == "WIN":
+                # draw pause title
+                drawText(SCREEN, MAIN_COLOR, { "text": "Winner Winner Chicken Dinner", "size": 250, "x_off": 0, "y_off": -200, "jump": True })
+                # render retray button
+                drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "back", "cb": cb_button_1 })
             # render apply button
             drawButton(SCREEN, SOUNDS, { "image_off_x": 300, "image_off_y": 100, "name": "exit", "cb": cb_button_2 })
         else:
@@ -235,10 +255,12 @@ def gameThread():
             drawText(SCREEN, (0, 0, 0), { "text": "Time remaining: " + str(remaining_seconds), "size": 100, "x_off": 0, "y_off": -490, "jump": False })
 
             # check if user interact with something
-            interaction = player.checkInteraction(mouseX, mouseY, SOUNDS)
+            interaction = player.checkInteraction()
             if not interaction:
                 # check if user press a movement key and move the player
                 player.checkPlayerMovements()
+            else:
+                interaction(SCREEN, mouseX, mouseY, SOUNDS, win_cb)
             
             if math.floor(max_seconds - seconds) <= 0:
                 GAME_STATE = "GAME_OVER"
@@ -269,7 +291,7 @@ def main():
     # show splash screen png
     # showSplashScreen()
     # show title screen after splash screen
-    # showTitleScreen()
+    showTitleScreen()
     # start the gameplay
     gameThread()
 
