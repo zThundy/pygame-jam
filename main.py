@@ -16,6 +16,7 @@ GAME_SUBTITLE = "Un gioco brutto fatto da zThundy__"
 # utils variables
 MAIN_COLOR = (50, 255, 50)
 GAME_STATE = "NULL"
+CURRENT_GAME_ID = 0
 
 # constant variable
 SCREEN = 0
@@ -28,19 +29,23 @@ def showSplashScreen():
     # access to global variables
     global SCREEN
     global FONT
+    global CURRENT_GAME_ID
 
     first_string = ""
     second_stirng = ""
-    splash_screen = True
     check = 0
 
+    def esc_cb():
+        global CURRENT_GAME_ID
+        CURRENT_GAME_ID = 1
+
     # 4 secondi di attesa
-    while splash_screen:
+    while CURRENT_GAME_ID == 0:
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
         # check events.py to see the executed code
-        checkForQuitEvent()
+        checkForQuitEvent(esc_cb)
 
         if random.randint(0, 100) > 85:
             if len(first_string) != len(GAME_TITLE):
@@ -60,7 +65,7 @@ def showSplashScreen():
         if len(first_string) == len(GAME_TITLE) and len(second_stirng) == len(GAME_SUBTITLE):
             check += 1
             if check > 200:
-                splash_screen = False
+                CURRENT_GAME_ID = 1
 
         # update display
         pygame.display.update()
@@ -72,29 +77,29 @@ def showTitleScreen():
     # access to global variables
     global SCREEN
     global FONT
+    global CURRENT_GAME_ID
 
     SCREEN.fill((0, 0, 0))
-    title_screen = True
 
     SOUNDS.playMusic("./sounds/main_theme.mp3", True, False)
 
     def button_1_press():
-        global title_screen
-        title_screen = False
+        global CURRENT_GAME_ID
+        CURRENT_GAME_ID = 2
         showSettingsScreen()
     def button_2_press():
-        global title_screen
-        title_screen = False
+        global CURRENT_GAME_ID
+        CURRENT_GAME_ID = 2
         SOUNDS.stopMusic()
         gameThread()
     def button_3_press():
-        global title_screen
-        title_screen = False
+        global CURRENT_GAME_ID
+        CURRENT_GAME_ID = 2
         pygame.time.delay(500)
         pygame.quit()
         sys.exit()
 
-    while title_screen:
+    while CURRENT_GAME_ID == 1:
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
@@ -117,8 +122,7 @@ def showSettingsScreen():
     global SCREEN
     global FONT
     global OPTIONS
-
-    settings_screen = True
+    global CURRENT_GAME_ID
 
     def cb_01():
         pygame.display.toggle_fullscreen()
@@ -129,15 +133,15 @@ def showSettingsScreen():
         SOUNDS.stopMusic()
 
     def buttons_cb():
-        global settings_screen
+        global CURRENT_GAME_ID
+        CURRENT_GAME_ID = 1
         showTitleScreen()
-        settings_screen = False
     def esc_cb():
-        global settings_screen
+        global CURRENT_GAME_ID
+        CURRENT_GAME_ID = 1
         showTitleScreen()
-        settings_screen = False
 
-    while settings_screen:
+    while CURRENT_GAME_ID == 2:
         # fill every time the screen with black color to reset
         # every element on the screen
         SCREEN.fill((0, 0, 0))
@@ -172,6 +176,7 @@ def gameThread():
     GAME_STATE = "NULL"
     global SCREEN
     global FONT
+    global CURRENT_GAME_ID
 
     player = Player(SCREEN)
     board = Board(SCREEN)
@@ -190,6 +195,8 @@ def gameThread():
 
     def cb_button_1():
         SOUNDS.stopMusic()
+        global CURRENT_GAME_ID
+        CURRENT_GAME_ID = 1
         showTitleScreen()
     def cb_button_2():
         SOUNDS.stopMusic()
@@ -291,7 +298,7 @@ def main():
     # show splash screen png
     # showSplashScreen()
     # show title screen after splash screen
-    showTitleScreen()
+    # showTitleScreen()
     # start the gameplay
     gameThread()
 

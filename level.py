@@ -153,8 +153,7 @@ class Level(Board):
             self.generateLevelObjects(960, 120, pygame.image.load("./sprites/rooms/room_elements/tavolo.png"), False, None, False, (15, 30))
             self.generateLevelObjects(960, 120, pygame.image.load("./sprites/rooms/room_elements/computer_spento.png"), True, computerInteractions, False, (25, 10))
             self.generateLevelObjects(600, 600, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
-            self.generateLevelObjects(720, 600, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
-            self.generateLevelObjects(840, 600, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
+            self.generateLevelObjects(960, 840, pygame.image.load("./sprites/rooms/room_elements/server_rack.png"), True)
 
 class Player(Board):
     saved_interaction = False
@@ -249,7 +248,7 @@ class Player(Board):
 
     def checkInteraction(self):
         if isInteractionPressed():
-            (isColliding, obj) = self.checkObjectCollisions(10, 10, -10, -10)
+            (isColliding, obj) = self.checkObjectCollisions(15, 15, -15, -15)
             if isColliding and "interaction" in obj:
                 self.saved_interaction = obj["interaction"]
 
