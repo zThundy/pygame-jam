@@ -239,7 +239,7 @@ def gameThread():
                 # draw game over title
                 drawText(SCREEN, MAIN_COLOR, { "text": "Game Over", "size": 250, "x_off": 0, "y_off": -200, "jump": True })
                 # render retray gameover button
-                drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "back", "cb": cb_button_1 })
+                drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "main_menu", "cb": cb_button_1 })
             elif GAME_STATE == "PAUSE":
                 # draw pause title
                 drawText(SCREEN, MAIN_COLOR, { "text": "Pause", "size": 250, "x_off": 0, "y_off": -200, "jump": True })
@@ -249,7 +249,7 @@ def gameThread():
                 # draw pause title
                 drawText(SCREEN, MAIN_COLOR, { "text": "Winner Winner Chicken Dinner", "size": 250, "x_off": 0, "y_off": -200, "jump": True })
                 # render retray button
-                drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "back", "cb": cb_button_1 })
+                drawButton(SCREEN, SOUNDS, { "image_off_x": -300, "image_off_y": 100, "name": "main_menu", "cb": cb_button_1 })
             # render apply button
             drawButton(SCREEN, SOUNDS, { "image_off_x": 300, "image_off_y": 100, "name": "exit", "cb": cb_button_2 })
         else:
