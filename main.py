@@ -1,4 +1,4 @@
-import sys, pygame, time, math, random, os
+import sys, pygame, time, math, random
 from pygame.locals import *
 
 from events import *
@@ -296,9 +296,9 @@ def main():
     # this is used only on startup
     # -------------------------- #
     # show splash screen png
-    showSplashScreen()
+    # showSplashScreen()
     # show title screen after splash screen
-    showTitleScreen()
+    # showTitleScreen()
     # start the gameplay
     gameThread()
 

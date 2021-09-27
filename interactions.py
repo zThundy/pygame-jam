@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 from pygame.locals import *
 from events import *
 from utils import *
@@ -150,6 +150,174 @@ def computerInteractions(SCREEN, mouseX, mouseY, sounds, cb = False):
         bin_opened = False
         folder_1_opened = False
         web_opened = False
+
+    SCREEN.blit(s, (0, 0))
+    # update display
+    pygame.display.update()
+    # limit the number of fps to prevent
+    # problems :)
+    CLOCK.tick(60)
+
+pixel_counter = 0
+green_cable = "None"
+red_cable = "None"
+yellow_cable = "None"
+def serverInteraction_1(SCREEN, mouseX, mouseY, sounds, cb = False):
+    global pixel_counter
+    global green_cable
+    global red_cable
+    global yellow_cable
+
+    s = pygame.Surface((SCREEN.get_width(), SCREEN.get_height()), SRCALPHA)
+    image = pygame.image.load("./sprites/rooms/room_elements/server_rack_interface.png")
+    image = pygame.transform.scale(image, (768, 768))
+    s.fill((0, 0, 0, 200))
+    s.blit(image, (SCREEN.get_width()/2 - image.get_width()/2, SCREEN.get_height()/2 - image.get_height()/2))
+
+    # first led row
+    if pixel_counter > 50 and pixel_counter < 70:
+        pygame.draw.rect(s, (0, 0, 255), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 180, 36, 36))
+    if pixel_counter > 80 and pixel_counter < 95:
+        pygame.draw.rect(s, (255, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 180, 36, 36))
+    if random.randint(0, pixel_counter) >= random.randint(0, pixel_counter):
+        pygame.draw.rect(s, (0, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 180, 36, 36))
+    # second led row
+    if pixel_counter > 50 and pixel_counter < 90:
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 348, 36, 36))
+    if pixel_counter > 10 and pixel_counter < 100:
+        pygame.draw.rect(s, (255, 150, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 348, 36, 36))
+    if green_cable != "Plugged" and red_cable != "Plugged" and yellow_cable != "Plugged":
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+    if green_cable == "Plugged" and red_cable != "Plugged":
+        pygame.draw.rect(s, (0, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+    if green_cable == "Plugged" and red_cable == "Plugged":
+        pygame.draw.rect(s, (0, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+        pygame.draw.rect(s, (0, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+
+
+    pygame.draw.rect(s, (255, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 396, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+    # check if green cable is plugged in
+    if green_cable == "Plugged_1" or green_cable == "Plugged":
+        pygame.draw.rect(s, (0, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 660, 36, 280))
+    # check if red cable is plugged in
+    if red_cable == "Plugged_1" or red_cable == "Plugged":
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 660, 36, 280))
+    # check if yellow cable is plugged in
+    if yellow_cable == "Plugged_1" or yellow_cable == "Plugged":
+        pygame.draw.rect(s, (255, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 396, (SCREEN.get_height()/2 - image.get_height()/2) + 660, 36, 280))
+
+    if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 648, 36, 36):
+        sounds.playSound("./sounds/tasks/cable_plug.wav")
+        if green_cable == "None":
+            green_cable = "Plugged_1"
+        elif green_cable == "Plugged_1":
+            green_cable = "None"
+        elif green_cable == "Plugged_2":
+            green_cable = "Plugged"
+    if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 648, 36, 36):
+        sounds.playSound("./sounds/tasks/cable_plug.wav")
+        if red_cable == "None":
+            red_cable = "Plugged_1"
+        elif red_cable == "Plugged_1":
+            red_cable = "None"
+        elif red_cable == "Plugged_2":
+            red_cable = "Plugged"
+    if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - image.get_width()/2) + 396, (SCREEN.get_height()/2 - image.get_height()/2) + 648, 36, 36):
+        sounds.playSound("./sounds/tasks/cable_plug.wav")
+        if yellow_cable == "None":
+            yellow_cable = "Plugged_1"
+        elif yellow_cable == "Plugged_1":
+            yellow_cable = "None"
+        elif yellow_cable == "Plugged_2":
+            yellow_cable = "Plugged"
+    
+    if pixel_counter > 100:
+        pixel_counter = 0
+    
+    pixel_counter += 1
+
+    SCREEN.blit(s, (0, 0))
+    # update display
+    pygame.display.update()
+    # limit the number of fps to prevent
+    # problems :)
+    CLOCK.tick(60)
+
+def serverInteraction_2(SCREEN, mouseX, mouseY, sounds, cb = False):
+    global pixel_counter
+    global green_cable
+    global red_cable
+    global yellow_cable
+
+    s = pygame.Surface((SCREEN.get_width(), SCREEN.get_height()), SRCALPHA)
+    image = pygame.image.load("./sprites/rooms/room_elements/server_rack_interface.png")
+    image = pygame.transform.scale(image, (768, 768))
+    s.fill((0, 0, 0, 200))
+    s.blit(image, (SCREEN.get_width()/2 - image.get_width()/2, SCREEN.get_height()/2 - image.get_height()/2))
+
+    # first led row
+    if pixel_counter > 50 and pixel_counter < 70:
+        pygame.draw.rect(s, (0, 0, 255), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 180, 36, 36))
+    if pixel_counter > 80 and pixel_counter < 95:
+        pygame.draw.rect(s, (255, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 180, 36, 36))
+    if random.randint(0, pixel_counter) >= random.randint(0, pixel_counter):
+        pygame.draw.rect(s, (0, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 180, 36, 36))
+    # second led row
+    if pixel_counter > 50 and pixel_counter < 90:
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 348, 36, 36))
+    if pixel_counter > 10 and pixel_counter < 100:
+        pygame.draw.rect(s, (255, 150, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 348, 36, 36))
+    if green_cable != "Plugged" and red_cable != "Plugged":
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+    if green_cable == "Plugged" and red_cable != "Plugged":
+        pygame.draw.rect(s, (0, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+    if green_cable == "Plugged" and red_cable == "Plugged":
+        pygame.draw.rect(s, (0, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+        pygame.draw.rect(s, (0, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 516, 36, 36))
+
+    # check if green cable is plugged in
+    if green_cable == "Plugged_2" or green_cable == "Plugged":
+        pygame.draw.rect(s, (0, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 660, 36, 280))
+    # check if red cable is plugged in
+    if red_cable == "Plugged_2" or red_cable == "Plugged":
+        pygame.draw.rect(s, (255, 0, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 660, 36, 280))
+    # check if yellow cable is plugged in
+    if yellow_cable == "Plugged_2" or yellow_cable == "Plugged":
+        pygame.draw.rect(s, (255, 255, 0), ((SCREEN.get_width()/2 - image.get_width()/2) + 396, (SCREEN.get_height()/2 - image.get_height()/2) + 660, 36, 280))
+
+    if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - image.get_width()/2) + 468, (SCREEN.get_height()/2 - image.get_height()/2) + 648, 36, 36):
+        sounds.playSound("./sounds/tasks/cable_plug.wav")
+        if green_cable == "None":
+            green_cable = "Plugged_2"
+        elif green_cable == "Plugged_2":
+            green_cable = "None"
+        elif green_cable == "Plugged_1":
+            green_cable = "Plugged"
+    if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - image.get_width()/2) + 540, (SCREEN.get_height()/2 - image.get_height()/2) + 648, 36, 36):
+        sounds.playSound("./sounds/tasks/cable_plug.wav")
+        if red_cable == "None":
+            red_cable = "Plugged_2"
+        elif red_cable == "Plugged_2":
+            red_cable = "None"
+        elif red_cable == "Plugged_1":
+            red_cable = "Plugged"
+    if checkCollisionAndMouseClick(mouseX, mouseY, 3, 3, (SCREEN.get_width()/2 - image.get_width()/2) + 396, (SCREEN.get_height()/2 - image.get_height()/2) + 648, 36, 36):
+        sounds.playSound("./sounds/tasks/cable_plug.wav")
+        if yellow_cable == "None":
+            yellow_cable = "Plugged_2"
+        elif yellow_cable == "Plugged_2":
+            yellow_cable = "None"
+        elif yellow_cable == "Plugged_1":
+            yellow_cable = "Plugged"
+    
+    if pixel_counter > 100:
+        pixel_counter = 0
+    
+    pixel_counter += 1
 
     SCREEN.blit(s, (0, 0))
     # update display
