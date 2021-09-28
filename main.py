@@ -212,11 +212,11 @@ def gameThread():
         if GAME_STATE == "NULL":
             GAME_STATE = "PAUSE"
     def win_cb(name):
-        SOUNDS.stopMusic()
-        SOUNDS.playMusic("./sounds/win_theme.wav", True, True)
         if name != "keypad":
             return
         global GAME_STATE
+        SOUNDS.stopMusic()
+        SOUNDS.playMusic("./sounds/win_theme.wav", True, True)
         if GAME_STATE == "NULL":
             GAME_STATE = "WIN"
 
@@ -296,9 +296,9 @@ def main():
     # this is used only on startup
     # -------------------------- #
     # show splash screen png
-    # showSplashScreen()
+    showSplashScreen()
     # show title screen after splash screen
-    # showTitleScreen()
+    showTitleScreen()
     # start the gameplay
     gameThread()
 
